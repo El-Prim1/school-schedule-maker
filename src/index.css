@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-slate-100/60 text-slate-800 antialiased font-sans;
+  }
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+  }
+
+  /* Hide navigation, buttons, modals, toasts during print */
+  header,
+  nav,
+  .no-print,
+  button:not(.print-allow),
+  .diagnostic-banner {
+    display: none !important;
+  }
+
+  /* Expand full width */
+  main,
+  .print-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  table {
+    page-break-inside: auto;
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  th, td {
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  .print-header {
+    display: block !important;
+    margin-bottom: 12px !important;
+  }
+}
+
+.print-header {
+  display: none;
+}
