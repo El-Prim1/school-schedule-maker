@@ -28,12 +28,18 @@ export const ClassScheduleView: React.FC<ClassScheduleViewProps> = ({
   const daysCount = settings.daysPerWeek;
 
   const [selectedClassId, setSelectedClassId] = useState<string>(classes[0]?.id || '');
+<<<<<<< HEAD
   const [classFilterGrade, setClassFilterGrade] = useState<number | 'all'>('all');
   const [classFilterShift, setClassFilterShift] = useState<'all' | 1 | 2>('all');
   const [viewMode, setViewMode] = useState<'single' | 'matrix'>('single');
   const [matrixDay, setMatrixDay] = useState<number>(0);
   const [matrixShiftFilter, setMatrixShiftFilter] = useState<'all' | 1 | 2>('all');
   const [matrixGradeFilter, setMatrixGradeFilter] = useState<number | 'all'>('all');
+=======
+  const [viewMode, setViewMode] = useState<'single' | 'matrix'>('single');
+  const [matrixDay, setMatrixDay] = useState<number>(0);
+  const [matrixShiftFilter, setMatrixShiftFilter] = useState<'all' | 1 | 2>('all');
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
   // Modal state
   const [modalOpen, setModalOpen] = useState(false);
@@ -148,6 +154,7 @@ export const ClassScheduleView: React.FC<ClassScheduleViewProps> = ({
   });
 
   const filteredMatrixClasses = classes.filter((c) => {
+<<<<<<< HEAD
     if (matrixShiftFilter !== 'all' && c.shift !== matrixShiftFilter) return false;
     if (matrixGradeFilter !== 'all' && c.grade !== matrixGradeFilter) return false;
     return true;
@@ -157,6 +164,10 @@ export const ClassScheduleView: React.FC<ClassScheduleViewProps> = ({
     if (classFilterShift !== 'all' && c.shift !== classFilterShift) return false;
     if (classFilterGrade !== 'all' && c.grade !== classFilterGrade) return false;
     return true;
+=======
+    if (matrixShiftFilter === 'all') return true;
+    return c.shift === matrixShiftFilter;
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   });
 
   return (
@@ -190,6 +201,7 @@ export const ClassScheduleView: React.FC<ClassScheduleViewProps> = ({
           </div>
 
           {viewMode === 'single' ? (
+<<<<<<< HEAD
             <div className="flex flex-col gap-2.5">
               {/* Filter controls: Shift & Grades */}
               <div className="flex flex-wrap items-center gap-2">
@@ -281,6 +293,37 @@ export const ClassScheduleView: React.FC<ClassScheduleViewProps> = ({
                     <span className="text-xs text-slate-400 italic">Нет классов по выбранному фильтру</span>
                   )}
                 </div>
+=======
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-medium text-slate-500">Класс:</label>
+              <div className="flex flex-wrap gap-1">
+                {classes.map((cls) => (
+                  <button
+                    key={cls.id}
+                    onClick={() => setSelectedClassId(cls.id)}
+                    className={`flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-bold transition-all ${
+                      cls.id === currentClass?.id
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    }`}
+                  >
+                    <span>{cls.name}</span>
+                    <span
+                      className={`text-[9px] px-1 py-0.2 rounded font-normal ${
+                        cls.id === currentClass?.id
+                          ? cls.shift === 2
+                            ? 'bg-amber-400 text-amber-950 font-bold'
+                            : 'bg-indigo-500 text-white'
+                          : cls.shift === 2
+                          ? 'bg-amber-100 text-amber-800'
+                          : 'bg-slate-200 text-slate-600'
+                      }`}
+                    >
+                      {cls.shift} см.
+                    </span>
+                  </button>
+                ))}
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
               </div>
             </div>
           ) : (
@@ -338,6 +381,7 @@ export const ClassScheduleView: React.FC<ClassScheduleViewProps> = ({
                   2-я смена ({classes.filter((c) => c.shift === 2).length})
                 </button>
               </div>
+<<<<<<< HEAD
 
               {/* Matrix Grade filter */}
               <div className="flex items-center gap-1 overflow-x-auto rounded-lg bg-slate-100 p-0.5 text-xs">
@@ -361,6 +405,8 @@ export const ClassScheduleView: React.FC<ClassScheduleViewProps> = ({
                   </button>
                 ))}
               </div>
+=======
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
             </div>
           )}
         </div>

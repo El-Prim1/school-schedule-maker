@@ -72,12 +72,20 @@ export function syncAnonymousTeachers(
   classes.forEach((cls) => {
     const id = getHomeroomTeacherId(cls.id);
     const existing = teacherMap.get(id);
+<<<<<<< HEAD
     const isPrimary = cls.grade <= 4;
     result.push({
       id,
       name: isPrimary ? `Классный руководитель (${cls.name}) – нач. классы` : `Классный руководитель (${cls.name})`,
       shortName: isPrimary ? `Учит. ${cls.name}` : `Кл. рук. ${cls.name}`,
       subjectIds: isPrimary ? ['sub_primary'] : [],
+=======
+    result.push({
+      id,
+      name: `Классный руководитель (${cls.name})`,
+      shortName: `Кл. рук. ${cls.name}`,
+      subjectIds: [],
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       maxHoursPerWeek: existing?.maxHoursPerWeek || 30,
       shift: cls.shift,
       isHomeroom: true,
@@ -145,6 +153,7 @@ export function getSubjectStaffingMetrics(
 }
 
 /**
+<<<<<<< HEAD
  * Automatically assigns teachers to curriculum items adhering to pedagogical pairing rules:
  * - Russian Language and Russian Literature are taught by the SAME teacher in each class.
  * - In grades 7-11, Algebra and Geometry are taught by the SAME teacher.
@@ -364,6 +373,8 @@ export function autoAssignTeachers(
 }
 
 /**
+=======
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
  * Automatically calculates and sets optimal teacher counts for each subject based on curriculum load
  */
 export function autoCalculateStaffing(

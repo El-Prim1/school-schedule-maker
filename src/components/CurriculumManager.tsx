@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { AppState, Subject, CurriculumItem, SchoolClass, RoomType, Teacher } from '../types/schedule';
 import { ROOM_TYPE_META, COLOR_PALETTE } from '../utils/constants';
+<<<<<<< HEAD
 import { autoAssignTeachers } from '../utils/staffingUtils';
 import { getStandardCurriculumForGrade } from '../utils/defaultData';
 import { Plus, BookOpen, Sparkles, Copy, Trash2, Sun, Moon, Users, School, CheckCircle2, Info } from 'lucide-react';
+=======
+import { Plus, BookOpen, Sparkles, Copy, Check, Trash2, Sliders, ShieldCheck } from 'lucide-react';
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
 interface CurriculumManagerProps {
   state: AppState;
@@ -23,8 +27,11 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
   const { classes, subjects, teachers, rooms, curriculum } = state;
 
   const [selectedClassId, setSelectedClassId] = useState<string>(classes[0]?.id || '');
+<<<<<<< HEAD
   const [filterGrade, setFilterGrade] = useState<number | 'all'>('all');
   const [filterShift, setFilterShift] = useState<'all' | 1 | 2>('all');
+=======
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   const [showAddSubjectModal, setShowAddSubjectModal] = useState<boolean>(false);
 
   // New subject state
@@ -33,8 +40,11 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
   const [newSubjRoomType, setNewSubjRoomType] = useState<RoomType>('regular');
   const [newSubjMaxPerDay, setNewSubjMaxPerDay] = useState<number>(1);
   const [newSubjColor, setNewSubjColor] = useState<string>(COLOR_PALETTE[0]);
+<<<<<<< HEAD
   const [newSubjDivided, setNewSubjDivided] = useState<boolean>(false);
 
+=======
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   const duplicateSubject = subjects.some(
     (subject) => subject.name.trim().toLowerCase() === newSubjName.trim().toLowerCase()
   );
@@ -45,7 +55,10 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
     : '';
 
   const currentClass = classes.find((c) => c.id === selectedClassId) || classes[0];
+<<<<<<< HEAD
   const isPrimary = currentClass ? currentClass.grade <= 4 : false;
+=======
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
   // Current class curriculum entries
   const currentClassItems = curriculum.filter((c) => c.classId === currentClass?.id);
@@ -54,7 +67,11 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
   // Handle hours change
   const handleHoursChange = (subjectId: string, hours: number) => {
     if (!currentClass) return;
+<<<<<<< HEAD
     const clampedHours = Math.max(0, Math.min(15, hours));
+=======
+    const clampedHours = Math.max(0, Math.min(10, hours));
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
     const existingIndex = curriculum.findIndex(
       (c) => c.classId === currentClass.id && c.subjectId === subjectId
@@ -71,6 +88,7 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
       };
     } else {
       // Find qualified teacher
+<<<<<<< HEAD
       const isDividedByDefault = subjectId === 'sub_eng' || subjectId === 'sub_inf';
       let defaultTeacherId: string | undefined;
       let defaultTeacherId2: string | undefined;
@@ -86,20 +104,28 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
         }
       }
 
+=======
+      const qualified = teachers.find((t) => t.subjectIds.includes(subjectId));
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       updated.push({
         id: `cur_${currentClass.id}_${subjectId}`,
         classId: currentClass.id,
         subjectId,
         hoursPerWeek: clampedHours,
+<<<<<<< HEAD
         teacherId: defaultTeacherId,
         teacherId2: defaultTeacherId2,
         dividedIntoGroups: isDividedByDefault,
+=======
+        teacherId: qualified?.id,
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       });
     }
 
     onUpdateCurriculum(updated);
   };
 
+<<<<<<< HEAD
   // Handle group division toggle
   const handleToggleDivided = (subjectId: string, divided: boolean) => {
     if (!currentClass) return;
@@ -123,6 +149,9 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
   };
 
   // Handle teacher 1 assignment change
+=======
+  // Handle teacher assignment change
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   const handleTeacherChange = (subjectId: string, teacherId: string) => {
     if (!currentClass) return;
     const updated = curriculum.map((c) => {
@@ -134,6 +163,7 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
     onUpdateCurriculum(updated);
   };
 
+<<<<<<< HEAD
   // Handle teacher 2 assignment change
   const handleTeacher2Change = (subjectId: string, teacherId2: string) => {
     if (!currentClass) return;
@@ -207,6 +237,8 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
     );
   };
 
+=======
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   // Copy plan from this class to all classes of same grade
   const copyPlanToParallel = () => {
     if (!currentClass) return;
@@ -220,21 +252,28 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
       updated = updated.filter((c) => c.classId !== targetClass.id);
       // Copy from current class
       currentClassItems.forEach((item) => {
+<<<<<<< HEAD
         let tId = item.teacherId;
         // If it was primary school subject or homeroom teacher, assign target class's homeroom
         if (item.subjectId === 'sub_primary' || tId === currentClass.homeroomTeacherId || tId === `tch_homeroom_${currentClass.id}`) {
           tId = targetClass.homeroomTeacherId || `tch_homeroom_${targetClass.id}`;
         }
+=======
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
         updated.push({
           id: `cur_${targetClass.id}_${item.subjectId}`,
           classId: targetClass.id,
           subjectId: item.subjectId,
           hoursPerWeek: item.hoursPerWeek,
+<<<<<<< HEAD
           teacherId: tId,
           teacherId2: item.teacherId2,
           dividedIntoGroups: item.dividedIntoGroups,
           preferredRoomId: item.preferredRoomId,
           preferredRoomId2: item.preferredRoomId2,
+=======
+          teacherId: item.teacherId,
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
         });
       });
     });
@@ -246,6 +285,7 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
     );
   };
 
+<<<<<<< HEAD
   // Auto assign qualified teachers adhering to pairing rules
   const handleAutoAssignTeachers = () => {
     const updated = autoAssignTeachers(curriculum, classes, subjects, teachers);
@@ -254,6 +294,19 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
       'Учителя распределены: классные руководители начальной школы закреплены за уроками 1-4 кл, иностранные языки разделены по группам!',
       'success'
     );
+=======
+  // Auto assign qualified teachers
+  const handleAutoAssignTeachers = () => {
+    const updated = curriculum.map((item) => {
+      if (item.teacherId) return item;
+      const qualified = teachers.filter((t) => t.subjectIds.includes(item.subjectId));
+      return {
+        ...item,
+        teacherId: qualified[0]?.id,
+      };
+    });
+    onUpdateCurriculum(updated);
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   };
 
   // Create custom subject
@@ -272,6 +325,7 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
     };
 
     onUpdateSubjects([...subjects, newSubject]);
+<<<<<<< HEAD
 
     // If a class is currently selected and divided is true, auto-add with 1 hour
     if (currentClass) {
@@ -295,6 +349,16 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
     onNotify?.(`Предмет «${newSubject.name}» успешно создан и добавлен в учебный план`, 'success');
   };
 
+=======
+    setShowAddSubjectModal(false);
+    setNewSubjName('');
+    setNewSubjShort('');
+    onNotify?.(`Предмет «${newSubject.name}» успешно создан`, 'success');
+  };
+
+  const subjectMap = new Map(subjects.map((s) => [s.id, s]));
+
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   return (
     <div className="space-y-6">
       {/* Top Banner */}
@@ -304,11 +368,19 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
             <div className="flex items-center gap-2">
               <BookOpen className="h-6 w-6 text-indigo-600" />
               <h2 className="text-xl font-extrabold text-slate-800">
+<<<<<<< HEAD
                 Учебный план и распределение предметов ({subjects.length} предметов)
               </h2>
             </div>
             <p className="mt-1 text-xs text-slate-500">
               Настройка недельной нагрузки классов, деление на подгруппы (английский, информатика), привязка классных руководителей для 1–4 классов и профильных педагогов.
+=======
+                Единый учебный план и предметы ({subjects.length} предметов)
+              </h2>
+            </div>
+            <p className="mt-1 text-xs text-slate-500">
+              Настройка недельной нагрузки классов, привязка преподавателей и добавление собственных профильных предметов.
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
             </p>
           </div>
 
@@ -318,13 +390,18 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
               className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition-all hover:bg-indigo-700 active:scale-95"
             >
               <Plus className="h-4 w-4" />
+<<<<<<< HEAD
               Добавить предмет в учебный план
+=======
+              Добавить свой предмет
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
             </button>
           </div>
         </div>
       </div>
 
       {/* Class selector & actions */}
+<<<<<<< HEAD
       <div className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-xs border border-slate-200">
         {/* Filters by Shift and Grade */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
@@ -494,16 +571,71 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
         </div>
       )}
 
+=======
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-white p-4 shadow-xs border border-slate-200">
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-bold text-slate-600">Класс:</label>
+          <div className="flex flex-wrap gap-1">
+            {classes.map((cls) => (
+              <button
+                key={cls.id}
+                onClick={() => setSelectedClassId(cls.id)}
+                className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-all ${
+                  cls.id === currentClass?.id
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                {cls.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 rounded-xl bg-indigo-50 px-3 py-1.5 text-xs font-bold text-indigo-900 border border-indigo-100">
+            <span>Итоговая нагрузка:</span>
+            <span className="text-sm font-black">{totalWeeklyHours} ч/нед</span>
+          </div>
+
+          {currentClass && (
+            <button
+              onClick={copyPlanToParallel}
+              className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 transition-all"
+              title="Скопировать учебный план на все классы этой параллели"
+            >
+              <Copy className="h-3.5 w-3.5 text-slate-500" />
+              Копировать на параллель {currentClass.grade} кл.
+            </button>
+          )}
+
+          <button
+            onClick={handleAutoAssignTeachers}
+            className="flex items-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-50/50 px-3 py-1.5 text-xs font-bold text-indigo-700 hover:bg-indigo-100/50"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            Автоназначение учителей
+          </button>
+        </div>
+      </div>
+
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       {/* Curriculum Matrix Table */}
       <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-xs">
         <table className="w-full border-collapse text-left text-xs">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
               <th className="p-3 font-bold text-slate-600">Предмет</th>
+<<<<<<< HEAD
               <th className="p-3 font-bold text-slate-600">Кабинет</th>
               <th className="p-3 font-bold text-slate-600 text-center">Часов в неделю</th>
               <th className="p-3 font-bold text-slate-600 text-center">Деление на группы</th>
               <th className="p-3 font-bold text-slate-600">Преподаватели и кабинеты групп</th>
+=======
+              <th className="p-3 font-bold text-slate-600">Тип кабинета</th>
+              <th className="p-3 font-bold text-slate-600 text-center">Часов в неделю</th>
+              <th className="p-3 font-bold text-slate-600">Преподаватель</th>
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
               {onDeleteSubject && <th className="p-3 font-bold text-slate-600 text-center w-16">Удалить</th>}
             </tr>
           </thead>
@@ -511,6 +643,7 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
             {subjects.map((sub) => {
               const currItem = currentClassItems.find((c) => c.subjectId === sub.id);
               const hours = currItem?.hoursPerWeek || 0;
+<<<<<<< HEAD
               const isDivided = Boolean(currItem?.dividedIntoGroups);
               const meta = ROOM_TYPE_META[sub.requiredRoomType];
 
@@ -524,10 +657,20 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
                     hours > 0 ? (isPrimarySubject ? 'bg-sky-50/30 hover:bg-sky-50/60' : 'hover:bg-slate-50/50') : 'opacity-60 hover:opacity-100'
                   }`}
                 >
+=======
+              const meta = ROOM_TYPE_META[sub.requiredRoomType];
+
+              // Qualified teachers for this subject
+              const qualified = teachers.filter((t) => t.subjectIds.includes(sub.id));
+
+              return (
+                <tr key={sub.id} className="hover:bg-slate-50/50 transition-colors">
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                   {/* Subject Name & Color */}
                   <td className="p-3">
                     <div className="flex items-center gap-2">
                       <div
+<<<<<<< HEAD
                         className="h-3.5 w-3.5 rounded-full shrink-0 shadow-2xs"
                         style={{ backgroundColor: sub.color || '#6366f1' }}
                       />
@@ -548,6 +691,18 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
                             </span>
                           )}
                         </div>
+=======
+                        className="h-3 w-3 rounded-full shrink-0"
+                        style={{ backgroundColor: sub.color || '#6366f1' }}
+                      />
+                      <div>
+                        <div className="font-bold text-slate-800">{sub.name}</div>
+                        {sub.isCustom && (
+                          <span className="rounded bg-indigo-100 px-1 py-0.2 text-[9px] font-bold text-indigo-700">
+                            Собственный
+                          </span>
+                        )}
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                       </div>
                     </div>
                   </td>
@@ -569,23 +724,34 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
                       <button
                         onClick={() => handleHoursChange(sub.id, hours - 1)}
                         className="h-6 w-6 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-100"
+<<<<<<< HEAD
                         title="Уменьшить часы"
                       >
                         -
                       </button>
                       <span className={`w-8 text-center text-sm font-extrabold ${hours > 0 ? 'text-indigo-700' : 'text-slate-400'}`}>
+=======
+                      >
+                        -
+                      </button>
+                      <span className="w-8 text-center text-sm font-extrabold text-indigo-700">
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                         {hours}
                       </span>
                       <button
                         onClick={() => handleHoursChange(sub.id, hours + 1)}
                         className="h-6 w-6 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-100"
+<<<<<<< HEAD
                         title="Увеличить часы"
+=======
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                       >
                         +
                       </button>
                     </div>
                   </td>
 
+<<<<<<< HEAD
                   {/* Group Division Toggle */}
                   <td className="p-3 text-center">
                     {hours > 0 ? (
@@ -693,6 +859,76 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
                             )}
                           </div>
                         )}
+=======
+                  {/* Teacher Selector */}
+                  <td className="p-3">
+                    {hours > 0 ? (
+                      <div>
+                        {(() => {
+                          const classShift = currentClass?.shift || 1;
+                          const isHomeroomSelected =
+                            currItem?.teacherId === 'homeroom' ||
+                            (Boolean(currentClass?.homeroomTeacherId) &&
+                              currItem?.teacherId === currentClass?.homeroomTeacherId) ||
+                            currItem?.teacherId === `tch_homeroom_${currentClass?.id}`;
+
+                          const subjectTeachersThisShift = teachers.filter(
+                            (t) => t.subjectIds.includes(sub.id) && (t.shift === classShift || !t.shift)
+                          );
+                          const otherShiftTeachers = teachers.filter(
+                            (t) => t.subjectIds.includes(sub.id) && t.shift && t.shift !== classShift
+                          );
+
+                          return (
+                            <>
+                              <select
+                                value={currItem?.teacherId || ''}
+                                onChange={(e) => handleTeacherChange(sub.id, e.target.value)}
+                                className={`w-full max-w-[280px] rounded-xl border px-3 py-1.5 text-xs font-medium shadow-2xs focus:border-indigo-500 focus:outline-hidden ${
+                                  !currItem?.teacherId
+                                    ? 'border-indigo-200 bg-indigo-50/40 text-indigo-900 font-semibold'
+                                    : isHomeroomSelected
+                                    ? 'border-purple-300 bg-purple-50 text-purple-900 font-semibold'
+                                    : 'border-slate-300 bg-white text-slate-800'
+                                }`}
+                              >
+                                <option value="">⚡ Автораспределение (свободный учитель)</option>
+                                <option
+                                  value="homeroom"
+                                  className="font-bold text-purple-800 bg-purple-50"
+                                >
+                                  🌟 Классный руководитель ({currentClass?.name})
+                                </option>
+
+                                {subjectTeachersThisShift.length > 0 && (
+                                  <optgroup label={`Учителя предмета (${classShift}-я смена)`}>
+                                    {subjectTeachersThisShift.map((tch) => (
+                                      <option key={tch.id} value={tch.id}>
+                                        {tch.name}
+                                      </option>
+                                    ))}
+                                  </optgroup>
+                                )}
+
+                                {otherShiftTeachers.length > 0 && (
+                                  <optgroup label="Учителя другой смены">
+                                    {otherShiftTeachers.map((tch) => (
+                                      <option key={tch.id} value={tch.id}>
+                                        {tch.name}
+                                      </option>
+                                    ))}
+                                  </optgroup>
+                                )}
+                              </select>
+                              {isHomeroomSelected && (
+                                <div className="mt-1 flex items-center gap-1 text-[10px] font-bold text-purple-700">
+                                  <span>🌟 Назначен: Классный руководитель ({currentClass?.name})</span>
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()}
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                       </div>
                     ) : (
                       <span className="text-slate-300">—</span>
@@ -702,6 +938,7 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
                   {/* Delete Subject Button */}
                   {onDeleteSubject && (
                     <td className="p-3 text-center">
+<<<<<<< HEAD
                       {sub.isCustom && (
                         <button
                           onClick={() => onDeleteSubject(sub.id)}
@@ -711,6 +948,15 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
                           <Trash2 className="h-4 w-4" />
                         </button>
                       )}
+=======
+                      <button
+                        onClick={() => onDeleteSubject(sub.id)}
+                        className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors"
+                        title={`Удалить предмет «${sub.name}»`}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                     </td>
                   )}
                 </tr>
@@ -720,17 +966,28 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
         </table>
       </div>
 
+<<<<<<< HEAD
       {/* MODAL: Add Custom Subject / Lesson */}
+=======
+      {/* MODAL: Add Custom Subject */}
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       {showAddSubjectModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
           <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
                 <h3 className="text-lg font-bold text-slate-800">
+<<<<<<< HEAD
                   Добавление предмета в учебный план
                 </h3>
                 <p className="text-xs text-slate-500">
                   Создайте спецкурс, факультатив или профильную дисциплину с настройкой деления на группы
+=======
+                  Добавление собственного предмета
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Создайте спецкурс, факультатив или профильную дисциплину
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                 </p>
               </div>
               <button
@@ -794,6 +1051,7 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
                 </select>
               </div>
 
+<<<<<<< HEAD
               {/* Group Division Checkbox */}
               <div className="rounded-xl border border-indigo-100 bg-indigo-50/60 p-3">
                 <label className="flex items-center gap-3 cursor-pointer">
@@ -815,6 +1073,8 @@ export const CurriculumManager: React.FC<CurriculumManagerProps> = ({
                 </label>
               </div>
 
+=======
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
                   Максимум уроков в день

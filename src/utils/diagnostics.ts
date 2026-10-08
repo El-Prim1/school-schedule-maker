@@ -34,6 +34,7 @@ export function runDiagnostics(state: AppState): DiagnosticIssue[] {
         .filter((s) => s.classId === cls.id && s.dayOfWeek === day)
         .sort((a, b) => a.lessonIndex - b.lessonIndex);
 
+<<<<<<< HEAD
       if (dayLessons.length === 0) continue;
 
       const uniqueSlots = Array.from(new Set(dayLessons.map((l) => l.lessonIndex))).sort((a, b) => a - b);
@@ -58,6 +59,15 @@ export function runDiagnostics(state: AppState): DiagnosticIssue[] {
       const maxSlot = uniqueSlots[uniqueSlots.length - 1];
 
       const hasGaps = maxSlot - minSlot + 1 !== uniqueSlots.length;
+=======
+      if (dayLessons.length <= 1) continue;
+
+      const indices = dayLessons.map((l) => l.lessonIndex);
+      const minSlot = Math.min(...indices);
+      const maxSlot = Math.max(...indices);
+
+      const hasGaps = maxSlot - minSlot + 1 !== dayLessons.length;
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       const startsLate = minSlot > 0;
 
       if (hasGaps || startsLate) {
@@ -66,7 +76,11 @@ export function runDiagnostics(state: AppState): DiagnosticIssue[] {
           type: 'student_gap',
           severity: 'error',
           title: `Окно в расписании ${cls.name}`,
+<<<<<<< HEAD
           description: `В день ${day + 1} (${DAYS_OF_WEEK[day]?.name || ''}) у класса ${cls.name} обнаружены разрывы или поздний старт между уроками (заняты слоты: ${uniqueSlots.map((i) => i + 1).join(', ')}).`,
+=======
+          description: `В день ${day + 1} (${DAYS_OF_WEEK[day]?.name || ''}) у класса ${cls.name} обнаружены разрывы или поздний старт между уроками (заняты слоты: ${indices.map((i) => i + 1).join(', ')}).`,
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
           classId: cls.id,
           dayOfWeek: day,
           canAutoFix: true,
@@ -168,16 +182,25 @@ export function runDiagnostics(state: AppState): DiagnosticIssue[] {
   classes.forEach((cls) => {
     const limit = parallelLimits[cls.grade] || 6;
     for (let day = 0; day < daysCount; day++) {
+<<<<<<< HEAD
       const distinctSlots = new Set(
         schedule.filter((s) => s.classId === cls.id && s.dayOfWeek === day).map((s) => s.lessonIndex)
       ).size;
       if (distinctSlots > limit) {
+=======
+      const count = schedule.filter((s) => s.classId === cls.id && s.dayOfWeek === day).length;
+      if (count > limit) {
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
         issues.push({
           id: `lim_${cls.id}_${day}`,
           type: 'daily_limit_exceeded',
           severity: 'warning',
           title: `Превышен дневной лимит уроков (${cls.name})`,
+<<<<<<< HEAD
           description: `У класса ${cls.name} в ${DAYS_OF_WEEK[day]?.name || `день ${day + 1}`} назначено ${distinctSlots} уроков при максимальном лимите ${limit}.`,
+=======
+          description: `У класса ${cls.name} в ${DAYS_OF_WEEK[day]?.name || `день ${day + 1}`} назначено ${count} уроков при максимальном лимите ${limit}.`,
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
           classId: cls.id,
           dayOfWeek: day,
           canAutoFix: true,
@@ -195,12 +218,18 @@ export function runDiagnostics(state: AppState): DiagnosticIssue[] {
         .sort((a, b) => a.lessonIndex - b.lessonIndex);
 
       if (tchLessons.length <= 1) continue;
+<<<<<<< HEAD
       const uniqueSlots = Array.from(new Set(tchLessons.map((s) => s.lessonIndex))).sort((a, b) => a - b);
       if (uniqueSlots.length <= 1) continue;
 
       const minSlot = uniqueSlots[0];
       const maxSlot = uniqueSlots[uniqueSlots.length - 1];
       const windowCount = maxSlot - minSlot + 1 - uniqueSlots.length;
+=======
+      const minSlot = tchLessons[0].lessonIndex;
+      const maxSlot = tchLessons[tchLessons.length - 1].lessonIndex;
+      const windowCount = maxSlot - minSlot + 1 - tchLessons.length;
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
       if (windowCount > 0) {
         issues.push({
@@ -220,12 +249,18 @@ export function runDiagnostics(state: AppState): DiagnosticIssue[] {
 
   // 7. Check Curriculum Hours completeness
   curriculum.forEach((curr) => {
+<<<<<<< HEAD
     const classSubLessons = schedule.filter(
       (s) => s.classId === curr.classId && s.subjectId === curr.subjectId
     );
     const scheduledHours = curr.dividedIntoGroups
       ? new Set(classSubLessons.map((s) => `${s.dayOfWeek}_${s.lessonIndex}`)).size
       : classSubLessons.length;
+=======
+    const scheduledHours = schedule.filter(
+      (s) => s.classId === curr.classId && s.subjectId === curr.subjectId
+    ).length;
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
     if (scheduledHours < curr.hoursPerWeek) {
       const cls = classMap.get(curr.classId);
@@ -929,6 +964,10 @@ export function autoFixAllIssues(state: AppState): AutoFixAllResult {
 
   let iterations = 0;
   const maxIterations = 12; // 12 rounds is plenty with fast local checks!
+<<<<<<< HEAD
+=======
+  let totalFixed = 0;
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
   while (iterations < maxIterations) {
     const currentIssues = runDiagnostics(currentState).filter((i) => i.canAutoFix);
@@ -956,6 +995,7 @@ export function autoFixAllIssues(state: AppState): AutoFixAllResult {
     for (const issue of sortedIssues) {
       const nextState = autoFixIssue(currentState, issue);
       if (nextState !== currentState) {
+<<<<<<< HEAD
         const beforeCount = runDiagnostics(currentState).length;
         const afterIssues = runDiagnostics(nextState);
 
@@ -964,6 +1004,11 @@ export function autoFixAllIssues(state: AppState): AutoFixAllResult {
         if (afterIssues.length >= beforeCount) continue;
         currentState = nextState;
         fixedInRound = true;
+=======
+        currentState = nextState;
+        fixedInRound = true;
+        totalFixed++;
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       }
     }
 
@@ -971,10 +1016,15 @@ export function autoFixAllIssues(state: AppState): AutoFixAllResult {
       // Fallback single-pass fast LNS if heuristic stalled
       const lnsResult = repairScheduleLNS(currentState);
       if (lnsResult.success && lnsResult.repairedItemsCount > 0) {
+<<<<<<< HEAD
         const lnsState = { ...currentState, schedule: lnsResult.repairedSchedule };
         if (runDiagnostics(lnsState).length < runDiagnostics(currentState).length) {
           currentState = lnsState;
         }
+=======
+        currentState = { ...currentState, schedule: lnsResult.repairedSchedule };
+        totalFixed += lnsResult.repairedItemsCount;
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       }
       break;
     }
@@ -988,7 +1038,11 @@ export function autoFixAllIssues(state: AppState): AutoFixAllResult {
 
   return {
     newState: currentState,
+<<<<<<< HEAD
     fixedCount: effectiveFixed,
+=======
+    fixedCount: effectiveFixed > 0 ? effectiveFixed : totalFixed,
+>>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
     initialIssuesCount,
     remainingIssuesCount: finalCount,
     remainingIssues: finalIssues,
