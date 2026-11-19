@@ -1,20 +1,15 @@
-/**
+﻿/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
 
-<<<<<<< HEAD
 import React, { lazy, Suspense, useState, useEffect, useRef } from 'react';
-=======
-import React, { useState, useEffect, useRef } from 'react';
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 import { AppState, ScheduleItem, SchoolClass, Subject, Teacher, Room, CurriculumItem } from './types/schedule';
 import { getDefaultAppState, loadDemoScheduleState, getEmptyAppState } from './utils/defaultData';
 import { generateSchedule, generateScheduleAsync, GenerationResult } from './utils/scheduler';
 import { runDiagnostics, diagnoseConstraints, repairScheduleLNS } from './utils/diagnostics';
 import { exportScheduleToCSV, exportStateToJSON, printSchedule } from './utils/exportUtils';
 import { syncAnonymousTeachers } from './utils/staffingUtils';
-<<<<<<< HEAD
 import { SwipeableToast } from './components/SwipeableToast';
 
 // Tab and schedule views are loaded on demand to keep the initial bundle small.
@@ -45,18 +40,6 @@ const RoomsManager = lazy(() =>
 const SettingsManager = lazy(() =>
   import('./components/SettingsManager').then((module) => ({ default: module.SettingsManager }))
 );
-=======
-import { ClassScheduleView } from './components/ClassScheduleView';
-import { TeacherScheduleView } from './components/TeacherScheduleView';
-import { RoomScheduleView } from './components/RoomScheduleView';
-import { DiagnosticsPanel } from './components/DiagnosticsPanel';
-import { ClassesManager } from './components/ClassesManager';
-import { CurriculumManager } from './components/CurriculumManager';
-import { TeachersManager } from './components/TeachersManager';
-import { RoomsManager } from './components/RoomsManager';
-import { SettingsManager } from './components/SettingsManager';
-import { SwipeableToast } from './components/SwipeableToast';
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 import {
   Calendar,
   Sparkles,
@@ -215,7 +198,6 @@ export default function App() {
 
     try {
       const result = await generateScheduleAsync(state);
-<<<<<<< HEAD
       setLastGenResult(result);
       setShowGenModal(true);
 
@@ -224,28 +206,12 @@ export default function App() {
       if (!result.success || result.unplacedCount > 0) {
         updateStateWithUndo(
           generatedState,
-=======
-      setState((prev) => ({
-        ...prev,
-        schedule: result.schedule,
-      }));
-      setLastGenResult(result);
-      setShowGenModal(true);
-
-      if (!result.success || result.unplacedCount > 0) {
-        updateStateWithUndo(
-          { ...state, schedule: result.schedule },
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
           `Внимание: не удалось разместить ${result.unplacedCount} уроков из-за перегрузки.`,
           'error'
         );
       } else {
         updateStateWithUndo(
-<<<<<<< HEAD
           generatedState,
-=======
-          { ...state, schedule: result.schedule },
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
           `Расписание успешно сгенерировано (${result.metrics.totalLessons} уроков, CP-SAT)!`,
           'success'
         );
@@ -267,11 +233,7 @@ export default function App() {
     setConfirmModal({
       isOpen: true,
       title: '🔄 Сброс к образцу школы',
-<<<<<<< HEAD
       message: 'Вы уверены, что хотите сбросить текущие данные к исходному образцу школы (44 класса: 1–11 параллели А–Г, 2 смены, учителя и кабинеты)?',
-=======
-      message: 'Вы уверены, что хотите сбросить текущие данные к исходному образцу школы (8 классов, 15 учителей, кабинеты и учебный план)?',
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       confirmText: 'Да, сбросить к образцу',
       onConfirm: () => {
         const freshState = getDefaultAppState();
@@ -397,10 +359,6 @@ export default function App() {
         'success'
       );
     } else {
-<<<<<<< HEAD
-=======
-      handleUpdateScheduleItem(item);
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       updateStateWithUndo(
         { ...state, schedule: [...state.schedule.filter((s) => s.id !== item.id), item] },
         'Урок сохранен в сетку расписания.',
@@ -724,11 +682,7 @@ export default function App() {
             <div className="flex items-center gap-2 font-semibold">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-ping" />
               <span className="font-black text-purple-200 uppercase tracking-wider">🟢 Интерактивный демо-просмотр:</span>
-<<<<<<< HEAD
               <span className="text-purple-100">Загружен эталонный школьный проект (44 класса: 1–11 параллели А–Г, 2 смены: 2, 3, 6, 7 классы во 2-й смене, связки рус/лит и алгебра/геометрия, 0 окон у классов).</span>
-=======
-              <span className="text-purple-100">Загружен эталонный школьный проект (12 классов, 2 смены, правила предметов, 0 окон).</span>
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -750,7 +704,6 @@ export default function App() {
 
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-6 sm:px-6">
-<<<<<<< HEAD
         <Suspense
           fallback={
             <div className="flex min-h-[240px] items-center justify-center rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-500 shadow-xs">
@@ -761,8 +714,6 @@ export default function App() {
             </div>
           }
         >
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
         {/* SCHEDULE TAB CONTENT */}
         {activeTab === 'schedule' && (
           <div className="space-y-6">
@@ -822,7 +773,6 @@ export default function App() {
               />
             )}
 
-<<<<<<< HEAD
             {scheduleSubView === 'teachers' && (
               <TeacherScheduleView
                 state={state}
@@ -831,9 +781,6 @@ export default function App() {
                 onNotify={showAppToast}
               />
             )}
-=======
-            {scheduleSubView === 'teachers' && <TeacherScheduleView state={state} />}
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
             {scheduleSubView === 'rooms' && <RoomScheduleView state={state} />}
           </div>
@@ -922,10 +869,7 @@ export default function App() {
             onResetToDemo={handleResetToDemo}
           />
         )}
-<<<<<<< HEAD
         </Suspense>
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       </main>
 
       {/* UNDO / REDO TOAST NOTIFICATION (SWIPEABLE WITH CLOSE BUTTON) */}

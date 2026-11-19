@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-import React, { useState, useRef, useMemo } from 'react';
+﻿import React, { useState, useRef, useMemo } from 'react';
 import { AppState, DiagnosticIssue, Room, RoomType, Subject, SchoolClass, Teacher } from '../types/schedule';
-=======
-import React, { useState, useRef } from 'react';
-import { AppState, DiagnosticIssue, Room, Subject, SchoolClass } from '../types/schedule';
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 import {
   runDiagnostics,
   autoFixIssue,
@@ -14,7 +9,6 @@ import {
   applyAllAutoFixes,
   repairScheduleLNS,
   AutoFixAction,
-<<<<<<< HEAD
   MUCCore,
 } from '../utils/diagnostics';
 import {
@@ -29,10 +23,6 @@ import {
 } from '../utils/chainRepairEngine';
 import { syncAnonymousTeachers } from '../utils/staffingUtils';
 import { DAYS_OF_WEEK } from '../utils/constants';
-=======
-} from '../utils/diagnostics';
-import { syncAnonymousTeachers } from '../utils/staffingUtils';
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 import { SwipeableToast } from './SwipeableToast';
 import {
   CheckCircle2,
@@ -58,7 +48,6 @@ import {
   Sliders,
   TrendingUp,
   HelpCircle,
-<<<<<<< HEAD
   Network,
   Coffee,
   GitBranch,
@@ -67,8 +56,6 @@ import {
   FastForward,
   ChevronRight,
   Activity,
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 } from 'lucide-react';
 
 interface DiagnosticsPanelProps {
@@ -88,16 +75,11 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
   onUpdateStateWithUndo,
   onNavigateToSchedule,
 }) => {
-<<<<<<< HEAD
   // Active Navigation Tab:
   // - 'contour2': Schedule Diagnostics & General LNS Local Repair
   // - 'chain_lns': Dedicated Chain-Ruin Large Neighborhood Search & Teacher Windows Center
   // - 'contour1': Structural Pre-Analysis (MUC / IIS)
   const [activeContour, setActiveContour] = useState<'contour2' | 'chain_lns' | 'contour1'>('contour2');
-=======
-  // Active Contour tab: 'contour1' (MUC Structural Pre-Analysis) or 'contour2' (LNS Schedule Local Repair)
-  const [activeContour, setActiveContour] = useState<'contour1' | 'contour2'>('contour2');
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
   // Contour 1: Structural Analysis (MUC / IIS)
   const structuralResult = diagnoseConstraints(state);
@@ -105,7 +87,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
   // Contour 2: Schedule Diagnostics
   const scheduleIssues = runDiagnostics(state);
 
-<<<<<<< HEAD
   // Chain-LNS Teacher Windows Detection across entire school
   const allTeacherWindows = useMemo(() => findAllTeacherWindows(state), [state]);
   const totalTeacherWindowsCount = useMemo(
@@ -113,13 +94,10 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
     [allTeacherWindows]
   );
 
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   const [lastActionMessage, setLastActionMessage] = useState<string | null>(null);
   const [lastActionType, setLastActionType] = useState<'success' | 'error' | 'warning'>('success');
   const [isRepairingLNS, setIsRepairingLNS] = useState(false);
   const [isFixingAll, setIsFixingAll] = useState(false);
-<<<<<<< HEAD
   const [isFixingChainLNS, setIsFixingChainLNS] = useState(false);
   const [repairingSpecificWindowKey, setRepairingSpecificWindowKey] = useState<string | null>(null);
 
@@ -133,16 +111,11 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
   const [inspectDepth, setInspectDepth] = useState<number>(2);
   const [inspectAdjacentDays, setInspectAdjacentDays] = useState<boolean>(false);
   const [chainLogs, setChainLogs] = useState<string[]>([]);
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
   // Modal for unresolvable bottlenecks / conflict resolution
   const [showConflictModal, setShowConflictModal] = useState(false);
   const [conflictModalIssues, setConflictModalIssues] = useState<DiagnosticIssue[]>([]);
-<<<<<<< HEAD
   const [autoFixModalCore, setAutoFixModalCore] = useState<MUCCore | null>(null);
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
   const toastTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -165,7 +138,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
   const warnings = scheduleIssues.filter((i) => i.severity === 'warning');
   const autoFixableCount = scheduleIssues.filter((i) => i.canAutoFix).length;
 
-<<<<<<< HEAD
   // Selected teacher for inspector
   const currentInspectTeacher =
     state.teachers.find((t) => t.id === inspectTeacherId) || state.teachers[0];
@@ -270,8 +242,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
     }
   };
 
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   // -------------------------------------------------------------------
   // CONTOUR 1 HANDLERS (Minimal Relaxation Delta application)
   // -------------------------------------------------------------------
@@ -310,7 +280,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
   // -------------------------------------------------------------------
   // CONTOUR 2 HANDLERS (LNS Ruin-and-Recreate & Quick-Fixes)
   // -------------------------------------------------------------------
-<<<<<<< HEAD
   const handleFixOne = (issue: DiagnosticIssue) => {
     // If it's a teacher gap issue, use Chain-LNS
     if (issue.type === 'teacher_gap' && issue.teacherId && issue.dayOfWeek !== undefined) {
@@ -318,10 +287,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
       return;
     }
 
-=======
-  // Individual Issue Repair
-  const handleFixOne = (issue: DiagnosticIssue) => {
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
     const updated = autoFixIssue(state, issue);
     if (updated !== state) {
       if (onUpdateStateWithUndo) {
@@ -335,7 +300,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
     }
   };
 
-<<<<<<< HEAD
   // UNIFIED 1-CLICK ALL REPAIR
   const handleFixAll = () => {
     setIsFixingAll(true);
@@ -354,45 +318,20 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
         }
 
         // Step 3: If general issues remain, run deep LNS Ruin-and-Recreate CP-SAT solver
-=======
-  // UNIFIED 1-CLICK ALL REPAIR (Fast Multi-Pass + Deep LNS CP-SAT)
-  const handleFixAll = () => {
-    setIsFixingAll(true);
-
-    setTimeout(() => {
-      try {
-        // Step 1: Rapid multi-pass heuristic auto-fix
-        const fastResult = autoFixAllIssues(state);
-        let currentState = fastResult.newState;
-        let totalFixed = fastResult.fixedCount;
-
-        // Step 2: If issues remain, run deep LNS Ruin-and-Recreate CP-SAT solver
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
         let currentIssues = runDiagnostics(currentState);
         if (currentIssues.length > 0) {
           const lnsResult = repairScheduleLNS(currentState);
           if (lnsResult.success && lnsResult.repairedItemsCount > 0) {
             currentState = { ...currentState, schedule: lnsResult.repairedSchedule };
-<<<<<<< HEAD
             // Run final rapid compaction pass
             const finalFast = autoFixAllIssues(currentState);
             currentState = finalFast.newState;
-=======
-            totalFixed += lnsResult.repairedItemsCount;
-            // Run final rapid compaction pass
-            const finalFast = autoFixAllIssues(currentState);
-            currentState = finalFast.newState;
-            totalFixed += finalFast.fixedCount;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
           }
         }
 
         const remainingIssues = runDiagnostics(currentState);
         const remainingCount = remainingIssues.length;
-<<<<<<< HEAD
         const totalFixed = Math.max(0, initialIssueCount - remainingCount);
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
         if (currentState !== state) {
           if (onUpdateStateWithUndo) {
@@ -429,15 +368,8 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
   };
 
   // -------------------------------------------------------------------
-<<<<<<< HEAD
   // MODAL QUICK-ACTION HANDLERS
   // -------------------------------------------------------------------
-=======
-  // MODAL QUICK-ACTION HANDLERS (Direct 1-Click Conflict Solutions)
-  // -------------------------------------------------------------------
-
-  // 1. Disable conflicting constraints
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   const handleDisableConflictingConstraints = (constraintIds: string[]) => {
     const updatedConstraints = (state.constraints || []).map((c) =>
       constraintIds.includes(c.id) ? { ...c, enabled: false } : c
@@ -463,10 +395,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
     }
   };
 
-<<<<<<< HEAD
-=======
-  // 2. Increase parallel daily lesson limit for overloaded grades
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   const handleIncreaseParallelLimit = (grades: number[]) => {
     const updatedLimits = { ...state.parallelLimits };
     grades.forEach((g) => {
@@ -493,10 +421,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
     }
   };
 
-<<<<<<< HEAD
-=======
-  // 3. Add extra teacher for a overloaded subject
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   const handleAddTeacherForSubject = (subjectId: string, shift: 1 | 2 = 1) => {
     const updatedSubjects = state.subjects.map((s) => {
       if (s.id === subjectId) {
@@ -536,19 +460,11 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
     }
   };
 
-<<<<<<< HEAD
-=======
-  // 4. Create duplicate room for a congested room type
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   const handleAddDuplicateRoom = (roomType: string, roomName: string) => {
     const newRoom: Room = {
       id: `room_${Date.now()}_${Math.random().toString(36).substring(2, 5)}`,
       name: `${roomName} (Доп. зал/каб)`,
-<<<<<<< HEAD
       type: roomType as RoomType,
-=======
-      type: roomType as any,
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       capacity: 1,
     };
     const updatedState = { ...state, rooms: [...state.rooms, newRoom] };
@@ -572,10 +488,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
     }
   };
 
-<<<<<<< HEAD
-=======
-  // 5. Run LNS solver from inside modal
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   const handleRunLNSFromModal = () => {
     setIsRepairingLNS(true);
     setTimeout(() => {
@@ -684,7 +596,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
         />
       )}
 
-<<<<<<< HEAD
       {/* MULTI-CONTOUR NAVIGATION SWITCHER WITH PROMINENT CHAIN-LNS TAB */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-2 shadow-xs">
         <div className="flex flex-wrap rounded-xl bg-slate-100 p-1 gap-1">
@@ -692,26 +603,13 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
           <button
             onClick={() => setActiveContour('contour2')}
             className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-bold transition-all ${
-=======
-      {/* DUAL-CONTOUR NAVIGATION SWITCHER */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-2 shadow-xs">
-        <div className="flex rounded-xl bg-slate-100 p-1">
-          {/* Contour 2 Tab (Default & Main) */}
-          <button
-            onClick={() => setActiveContour('contour2')}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-bold transition-all ${
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
               activeContour === 'contour2'
                 ? 'bg-white text-indigo-700 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <Layers className="h-4 w-4" />
-<<<<<<< HEAD
             <span>Контур 2: Общая диагностика</span>
-=======
-            <span>Контур 2: Локальный ремонт (LNS)</span>
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
             {errors.length > 0 ? (
               <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-black text-rose-700">
                 {errors.length}
@@ -727,7 +625,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
             )}
           </button>
 
-<<<<<<< HEAD
           {/* DEDICATED CHAIN-LNS TAB */}
           <button
             onClick={() => setActiveContour('chain_lns')}
@@ -766,34 +663,20 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
           <button
             onClick={() => setActiveContour('contour1')}
             className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-bold transition-all ${
-=======
-          {/* Contour 1 Tab */}
-          <button
-            onClick={() => setActiveContour('contour1')}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-bold transition-all ${
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
               activeContour === 'contour1'
                 ? 'bg-white text-indigo-700 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <Cpu className="h-4 w-4" />
-<<<<<<< HEAD
             <span>Контур 1: MUC / IIS Анализ</span>
-=======
-            <span>Контур 1: Структурный анализ (MUC / IIS)</span>
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
             {structuralResult.cores.length > 0 ? (
               <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-black text-rose-700 animate-pulse">
                 {structuralResult.cores.length} MUC
               </span>
             ) : (
               <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-black text-emerald-700">
-<<<<<<< HEAD
                 0 ✓
-=======
-                0 ядер ✓
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
               </span>
             )}
           </button>
@@ -801,19 +684,13 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
 
         <div className="flex items-center gap-2 px-2 text-xs text-slate-500">
           <ShieldCheck className="h-4 w-4 text-indigo-600 shrink-0" />
-<<<<<<< HEAD
           <span className="hidden lg:inline font-medium">
             Локальная CP-SAT пересборка с графом зависимостей ресурсов
-=======
-          <span className="hidden md:inline">
-            Двухконтурная верификация: окна, профильные кабинеты, дневные лимиты и жесткие правила
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
           </span>
         </div>
       </div>
 
       {/* =================================================================== */}
-<<<<<<< HEAD
       {/* DEDICATED CHAIN-LNS TAB CONTENT (TEACHER WINDOWS & GRAPH LNS)       */}
       {/* =================================================================== */}
       {activeContour === 'chain_lns' && (
@@ -1136,8 +1013,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
       )}
 
       {/* =================================================================== */}
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       {/* CONTOUR 1: STRUCTURAL ANALYSIS (MUC / IIS Minimal Relaxation)       */}
       {/* =================================================================== */}
       {activeContour === 'contour1' && (
@@ -1351,16 +1226,11 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
                     <p className="mt-1 text-xs text-slate-600">
                       {errors.length === 0 && warnings.length === 0
                         ? 'Окна у учеников отсутствуют, накладок у учителей нет, профильные кабинеты и дневные лимиты строго соблюдены.'
-<<<<<<< HEAD
                         : 'Используйте «Исправить всё в 1 клик» или перейдите во вкладку «⚡ Chain-LNS» для точечного устранения окон преподавателей.'}
-=======
-                        : 'Используйте «Исправить всё в 1 клик» для устранения окон, добора недостающих часов и накладок. При неразрешимых конфликтах система предложит точечные решения.'}
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                     </p>
                   </div>
                 </div>
 
-<<<<<<< HEAD
                 <div className="flex flex-wrap items-center gap-2.5">
                   {/* Quick button to Chain-LNS */}
                   {totalTeacherWindowsCount > 0 && (
@@ -1373,9 +1243,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
                     </button>
                   )}
 
-=======
-                <div className="flex items-center gap-2.5">
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                   <button
                     onClick={handleFixAll}
                     disabled={isFixingAll || state.schedule.length === 0}
@@ -1452,7 +1319,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
                 </div>
               </div>
 
-<<<<<<< HEAD
               {/* Clickable Teacher Gaps Card -> Switches to Chain-LNS */}
               <div
                 onClick={() => setActiveContour('chain_lns')}
@@ -1469,12 +1335,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
                   }`}
                 >
                   {totalTeacherWindowsCount === 0 ? '0 окон ✓' : `${totalTeacherWindowsCount} окон ⚡`}
-=======
-              <div className="p-3">
-                <div className="text-[11px] font-semibold text-slate-500">Окна учителей</div>
-                <div className="mt-1 text-base font-black text-slate-700">
-                  {teacherGaps.length === 0 ? '0 окон ✓' : `${teacherGaps.length} окон`}
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                 </div>
               </div>
 
@@ -1529,10 +1389,7 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
                 {scheduleIssues.map((issue) => {
                   const isError = issue.severity === 'error';
                   const isWarning = issue.severity === 'warning';
-<<<<<<< HEAD
                   const isTeacherGap = issue.type === 'teacher_gap';
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
                   return (
                     <div
@@ -1585,7 +1442,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
                         </div>
 
                         <div className="flex items-center gap-2">
-<<<<<<< HEAD
                           {isTeacherGap ? (
                             <button
                               onClick={() => handleFixOne(issue)}
@@ -1595,9 +1451,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
                               <span>⚡ Устранить (Chain-LNS)</span>
                             </button>
                           ) : issue.canAutoFix ? (
-=======
-                          {issue.canAutoFix && (
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                             <button
                               onClick={() => handleFixOne(issue)}
                               className="flex items-center gap-1.5 rounded-xl border border-indigo-200 bg-white px-3.5 py-1.5 text-xs font-bold text-indigo-700 shadow-2xs hover:bg-indigo-50 hover:border-indigo-300 active:scale-95 transition-all"
@@ -1605,11 +1458,7 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
                               <Wrench className="h-3.5 w-3.5" />
                               <span>{issue.fixDescription || 'Исправить в 1 клик'}</span>
                             </button>
-<<<<<<< HEAD
                           ) : null}
-=======
-                          )}
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                         </div>
                       </div>
                     </div>
@@ -1644,14 +1493,10 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
               </div>
 
               <button
-<<<<<<< HEAD
                 onClick={() => {
                   setShowConflictModal(false);
                   setAutoFixModalCore(null);
                 }}
-=======
-                onClick={() => setShowConflictModal(false)}
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                 className="rounded-xl p-2 text-slate-400 hover:bg-white hover:text-slate-700 transition-colors"
               >
                 <X className="h-5 w-5" />
@@ -1660,7 +1505,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
 
             {/* Modal Scrollable Content */}
             <div className="overflow-y-auto p-6 space-y-4">
-<<<<<<< HEAD
               {/* Hero 1-Click Universal Fix Action Banner */}
               <div className="rounded-2xl border border-indigo-200 bg-gradient-to-r from-indigo-50/90 via-purple-50/80 to-blue-50/90 p-4.5 shadow-xs space-y-3">
                 <div className="flex items-start gap-3">
@@ -1721,8 +1565,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
                 </div>
               )}
 
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
               {/* Bottleneck 1: Conflicting Custom Rules */}
               {conflictingConstraints.length > 0 && (
                 <div className="rounded-2xl border border-amber-200 bg-amber-50/40 p-4 space-y-3">
@@ -1862,7 +1704,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
                 </div>
               )}
 
-<<<<<<< HEAD
               {/* Universal Solution 5: Comprehensive 1-Click Fix & Deep Mathematical CP-SAT Repair */}
               <div className="rounded-2xl border border-indigo-200 bg-gradient-to-r from-indigo-50/80 via-purple-50/60 to-blue-50/80 p-4 space-y-3 shadow-xs">
                 <div className="flex items-center gap-2 text-indigo-900">
@@ -1892,27 +1733,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
                     <span>{isRepairingLNS ? 'Выполняется расчет...' : 'Глубокий пересчет (CP-SAT)'}</span>
                   </button>
                 </div>
-=======
-              {/* Universal Solution 5: Deep Mathematical CP-SAT Repair */}
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-2.5">
-                <div className="flex items-center gap-2">
-                  <RefreshCw className="h-4 w-4 text-slate-700" />
-                  <h4 className="font-extrabold text-xs text-slate-800 uppercase tracking-wide">
-                    Глубокий математический ремонт (LNS CP-SAT)
-                  </h4>
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Запустить алгоритм Ruin-and-Recreate для поиска альтернативных комбинаций слотов без изменения лимитов.
-                </p>
-                <button
-                  onClick={handleRunLNSFromModal}
-                  disabled={isRepairingLNS}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-slate-800 active:scale-95 transition-all disabled:opacity-50"
-                >
-                  <RefreshCw className={`h-4 w-4 ${isRepairingLNS ? 'animate-spin' : ''}`} />
-                  <span>{isRepairingLNS ? 'Выполняется расчет...' : 'Запустить глубокий пересчет'}</span>
-                </button>
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
               </div>
             </div>
 
@@ -1922,7 +1742,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
                 Замечаний осталось: <strong>{currentIssuesForModal.length}</strong>
               </span>
 
-<<<<<<< HEAD
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleFixAll}
@@ -1942,14 +1761,6 @@ export const DiagnosticsPanel: React.FC<DiagnosticsPanelProps> = ({
                   Закрыть окно
                 </button>
               </div>
-=======
-              <button
-                onClick={() => setShowConflictModal(false)}
-                className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-all shadow-2xs"
-              >
-                Закрыть окно
-              </button>
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
             </div>
           </div>
         </div>

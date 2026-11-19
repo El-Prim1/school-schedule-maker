@@ -1,9 +1,5 @@
-import React, { useState } from 'react';
-<<<<<<< HEAD
+﻿import React, { useState } from 'react';
 import { AppState, ScheduleItem } from '../types/schedule';
-=======
-import { AppState } from '../types/schedule';
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 import { DAYS_OF_WEEK, ROOM_TYPE_META } from '../utils/constants';
 import {
   getBellScheduleForShift,
@@ -11,7 +7,6 @@ import {
   getLessonTimeString,
   calculateShift2StartTime,
 } from '../utils/shiftUtils';
-<<<<<<< HEAD
 import {
   fixTeacherWindowChain,
   getTeacherDayWindows,
@@ -54,21 +49,11 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({
   onUpdateStateWithUndo,
   onNotify,
 }) => {
-=======
-import { UserCheck, Clock, Coffee, Sun, Moon } from 'lucide-react';
-
-interface TeacherScheduleViewProps {
-  state: AppState;
-}
-
-export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state }) => {
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   const { teachers, classes, subjects, rooms, schedule, settings, parallelLimits } = state;
   const daysCount = settings.daysPerWeek;
 
   const [selectedTeacherId, setSelectedTeacherId] = useState<string>(teachers[0]?.id || '');
   const [shiftFilter, setShiftFilter] = useState<'all' | 1 | 2>('all');
-<<<<<<< HEAD
   const [repairingDay, setRepairingDay] = useState<number | null>(null);
 
   // Auto-Fix Modal state for unresolvable bottlenecks
@@ -78,8 +63,6 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
     dayIndex: number;
     teacherId: string;
   } | null>(null);
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
   const currentTeacher = teachers.find((t) => t.id === selectedTeacherId) || teachers[0];
 
@@ -125,26 +108,6 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
     shift1LessonsCount,
   ]);
 
-<<<<<<< HEAD
-=======
-  const shift2StartTime = React.useMemo(() => {
-    return calculateShift2StartTime(
-      settings?.shift1Start || '08:00',
-      settings?.breakDurationMinutes ?? 10,
-      shift1LessonsCount,
-      0,
-      settings?.breakAfterLesson2Minutes,
-      settings?.breakAfterLesson3Minutes
-    );
-  }, [
-    settings?.shift1Start,
-    settings?.breakDurationMinutes,
-    settings?.breakAfterLesson2Minutes,
-    settings?.breakAfterLesson3Minutes,
-    shift1LessonsCount,
-  ]);
-
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   if (!currentTeacher) {
     return <div className="p-8 text-center text-slate-500">Учителя не добавлены</div>;
   }
@@ -163,7 +126,6 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
   const shift1Hours = allTeacherLessons.filter((s) => (classMap.get(s.classId)?.shift || 1) === 1).length;
   const shift2Hours = allTeacherLessons.filter((s) => (classMap.get(s.classId)?.shift || 1) === 2).length;
 
-<<<<<<< HEAD
   // Calculate windows per day for this teacher using exact chain logic
   const dayStats = Array.from({ length: daysCount }).map((_, day) => {
     const win = getTeacherDayWindows(schedule, currentTeacher.id, day);
@@ -179,33 +141,11 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
       emptySlots: win.emptySlots,
       minSlot: win.minSlot,
       maxSlot: win.maxSlot,
-=======
-  // Calculate windows per day for this teacher
-  const dayStats = Array.from({ length: daysCount }).map((_, day) => {
-    const lessons = teacherLessons
-      .filter((s) => s.dayOfWeek === day)
-      .sort((a, b) => a.lessonIndex - b.lessonIndex);
-
-    let windowsCount = 0;
-    if (lessons.length > 1) {
-      const minSlot = lessons[0].lessonIndex;
-      const maxSlot = lessons[lessons.length - 1].lessonIndex;
-      windowsCount = maxSlot - minSlot + 1 - lessons.length;
-    }
-
-    return {
-      day,
-      count: lessons.length,
-      windowsCount,
-      minSlot: lessons[0]?.lessonIndex,
-      maxSlot: lessons[lessons.length - 1]?.lessonIndex,
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
     };
   });
 
   const totalWindows = dayStats.reduce((sum, d) => sum + d.windowsCount, 0);
 
-<<<<<<< HEAD
   // Handler: Fix teacher window chain via Chain-LNS
   const handleFixWindowChain = async (dayIndex: number) => {
     if (!currentTeacher || repairingDay !== null) return;
@@ -322,8 +262,6 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
     }
   };
 
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   return (
     <div className="space-y-6">
       {/* Teacher selector and info card */}
@@ -338,7 +276,6 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
                 <select
                   value={selectedTeacherId}
                   onChange={(e) => setSelectedTeacherId(e.target.value)}
-<<<<<<< HEAD
                   className="rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-sm font-bold text-slate-800 shadow-2xs focus:border-indigo-500 focus:outline-hidden max-w-md"
                 >
                   <optgroup label="Учителя-предметники">
@@ -359,15 +296,6 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
                         </option>
                       ))}
                   </optgroup>
-=======
-                  className="rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-base font-bold text-slate-800 shadow-2xs focus:border-indigo-500 focus:outline-hidden"
-                >
-                  {teachers.map((tch) => (
-                    <option key={tch.id} value={tch.id}>
-                      {tch.name}
-                    </option>
-                  ))}
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                 </select>
               </div>
               <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
@@ -388,11 +316,7 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
             </div>
           </div>
 
-<<<<<<< HEAD
           {/* Stats pills & Quick Chain-Fix Info */}
-=======
-          {/* Stats pills */}
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
           <div className="flex flex-wrap items-center gap-3 text-xs">
             <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 p-1">
               <button
@@ -437,7 +361,6 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
             </div>
 
             <div
-<<<<<<< HEAD
               className={`rounded-xl border px-3.5 py-2 flex items-center gap-3 ${
                 totalWindows > 0
                   ? 'border-rose-300 bg-rose-50/80 text-rose-900 shadow-2xs'
@@ -461,28 +384,13 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
                     </>
                   )}
                 </div>
-=======
-              className={`rounded-xl border px-3.5 py-2 ${
-                totalWindows > 0
-                  ? 'border-amber-200 bg-amber-50 text-amber-900'
-                  : 'border-emerald-200 bg-emerald-50 text-emerald-900'
-              }`}
-            >
-              <div className="text-[11px] font-medium opacity-80">Окон в расписании</div>
-              <div className="text-sm font-bold">
-                {totalWindows === 0 ? '0 (Идеально)' : `${totalWindows} ч.`}
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
               </div>
             </div>
           </div>
         </div>
       </div>
 
-<<<<<<< HEAD
       {/* Timetable Table with Red Badged Windows and ⚡ Auto-Fix Buttons */}
-=======
-      {/* Timetable Table */}
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-xs">
         <table className="w-full border-collapse text-left text-xs">
           <thead>
@@ -491,7 +399,6 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
                 <div>Урок / Время</div>
                 <div className="text-[10px] font-normal text-slate-400">1 см | 2 см</div>
               </th>
-<<<<<<< HEAD
               {DAYS_OF_WEEK.slice(0, daysCount).map((day) => {
                 const stat = dayStats[day.index];
                 const isDayRepairing = repairingDay === day.index;
@@ -512,16 +419,6 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
                   </th>
                 );
               })}
-=======
-              {DAYS_OF_WEEK.slice(0, daysCount).map((day) => (
-                <th key={day.index} className="p-3 text-center font-bold text-slate-700">
-                  {day.name}
-                  <span className="block text-[10px] font-normal text-slate-400">
-                    {dayStats[day.index]?.count} ч.
-                  </span>
-                </th>
-              ))}
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -551,11 +448,8 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
                       slotIdx > stat.minSlot &&
                       slotIdx < stat.maxSlot;
 
-<<<<<<< HEAD
                     const isDayRepairing = repairingDay === day.index;
 
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                     return (
                       <td
                         key={day.index}
@@ -620,7 +514,6 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
                             })}
                           </div>
                         ) : isWindow ? (
-<<<<<<< HEAD
                           /* HIGHLIGHTED WINDOW SLOT WITH RED BADGE AND CHAIN-LNS FIX BUTTON */
                           <div className="flex flex-col items-center justify-between rounded-xl border border-rose-300 bg-rose-50/70 p-2 text-center shadow-xs transition-all hover:bg-rose-50 group">
                             <div className="flex items-center gap-1.5">
@@ -659,11 +552,6 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
                                 </>
                               )}
                             </button>
-=======
-                          <div className="flex h-16 w-full flex-col items-center justify-center rounded-xl border border-dashed border-amber-300 bg-amber-50/50 text-[11px] font-semibold text-amber-700">
-                            <Coffee className="h-4 w-4 mb-0.5" />
-                            <span>Окно (свободно)</span>
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                           </div>
                         ) : (
                           <div className="h-16 flex items-center justify-center text-slate-200">
@@ -679,7 +567,6 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
           </tbody>
         </table>
       </div>
-<<<<<<< HEAD
 
       {/* AUTO-FIX MODAL FOR UNRESOLVABLE BOTTLENECKS */}
       {autoFixModal?.isOpen && (
@@ -760,8 +647,6 @@ export const TeacherScheduleView: React.FC<TeacherScheduleViewProps> = ({ state 
           </div>
         </div>
       )}
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
     </div>
   );
 };

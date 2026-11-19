@@ -1,4 +1,4 @@
-export type RoomType =
+﻿export type RoomType =
   | 'regular'
   | 'gym'
   | 'it'
@@ -62,13 +62,10 @@ export interface CurriculumItem {
   hoursPerWeek: number;
   teacherId?: string;
   preferredRoomId?: string;
-<<<<<<< HEAD
   dividedIntoGroups?: boolean; // Деление класса на подгруппы (например, по иностранному языку или информатике)
   groupCount?: number; // 1 | 2 (по умолчанию 1)
   teacherId2?: string; // Преподаватель 2-й подгруппы
   preferredRoomId2?: string; // Кабинет 2-й подгруппы
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 }
 
 export interface ScheduleItem {
@@ -79,11 +76,8 @@ export interface ScheduleItem {
   subjectId: string;
   teacherId: string;
   roomId: string;
-<<<<<<< HEAD
   groupId?: 1 | 2; // 1 = вся группа / 1-я подгруппа, 2 = 2-я подгруппа
   isDivided?: boolean;
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 }
 
 export type IssueSeverity = 'error' | 'warning' | 'info';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { AppState, SchoolClass } from '../types/schedule';
 import { RUSSIAN_LETTERS } from '../utils/constants';
 import { calculateShift2StartTime } from '../utils/shiftUtils';
@@ -52,7 +52,6 @@ export const ClassesManager: React.FC<ClassesManagerProps> = ({
     (c) => c.name.trim().toLowerCase() === singleClassName.toLowerCase()
   );
 
-<<<<<<< HEAD
   // View filtering state
   const [viewFilterShift, setViewFilterShift] = useState<'all' | 1 | 2>('all');
   const [viewFilterGrade, setViewFilterGrade] = useState<number | 'all'>('all');
@@ -63,8 +62,6 @@ export const ClassesManager: React.FC<ClassesManagerProps> = ({
     return true;
   });
 
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   // Toggle grade for mass creator
   const toggleGrade = (g: number) => {
     if (selectedGrades.includes(g)) {
@@ -281,7 +278,6 @@ export const ClassesManager: React.FC<ClassesManagerProps> = ({
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Classes List */}
         <div className="lg:col-span-2 space-y-4">
-<<<<<<< HEAD
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-base font-bold text-slate-800">
               Список сформированных классов ({classes.length})
@@ -342,14 +338,6 @@ export const ClassesManager: React.FC<ClassesManagerProps> = ({
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
             {displayedClasses.map((cls) => {
-=======
-          <h3 className="text-base font-bold text-slate-800">
-            Список сформированных классов ({classes.length})
-          </h3>
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-            {classes.map((cls) => {
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
               const homeroomTeacher = teachers.find((t) => t.id === cls.homeroomTeacherId);
               const homeroomRoom = rooms.find((r) => r.id === cls.homeroomRoomId);
               const limit = parallelLimits[cls.grade] || 6;

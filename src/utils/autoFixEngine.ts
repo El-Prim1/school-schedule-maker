@@ -1,4 +1,4 @@
-import {
+﻿import {
   AppState,
   ScheduleItem,
   Subject,
@@ -853,38 +853,6 @@ export function repairScheduleLNS(
 
     const classRecreated: ScheduleItem[] = [];
 
-<<<<<<< HEAD
-=======
-    const satisfiesUserRules = (item: ScheduleItem, day: number, slot: number, dayLength: number): boolean => {
-      const rules = (state.constraints || []).filter(
-        (rule) =>
-          rule.enabled &&
-          rule.subjectId === item.subjectId &&
-          (!rule.classId || rule.classId === 'all' || rule.classId === item.classId)
-      );
-
-      return rules.every((rule) => {
-        switch (rule.conditionType) {
-          case 'always_first':
-            return slot === 0;
-          case 'always_last':
-            return slot === Math.max(0, dayLength - 1);
-          case 'only_on_day':
-            return rule.dayOfWeek === undefined || day === rule.dayOfWeek;
-          case 'day_first':
-            return day !== rule.dayOfWeek || slot === 0;
-          case 'day_last':
-            return day !== rule.dayOfWeek || slot === Math.max(0, dayLength - 1);
-          case 'fixed_slot':
-            return (rule.dayOfWeek === undefined || day === rule.dayOfWeek) &&
-              (rule.lessonIndex === undefined || slot === rule.lessonIndex);
-          default:
-            return true;
-        }
-      });
-    };
-
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
     // DFS Backtracking with Forward Checking and Stability Cost
     function solveClassItems(
       itemIdx: number,
@@ -906,11 +874,6 @@ export function repairScheduleLNS(
       for (let si = 0; si < availableSlots.length; si++) {
         const { day, slot } = availableSlots[si];
         if (teacherOccupied.has(`${it.teacherId}_${day}_${cShift}_${slot}`)) continue;
-<<<<<<< HEAD
-=======
-        const dayLength = dayCounts.get(day) || dailyLimit;
-        if (!satisfiesUserRules(it, day, slot, dayLength)) continue;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
         const validRooms = rooms.filter(
           (r) =>
@@ -974,16 +937,7 @@ export function repairScheduleLNS(
           for (const d of neighborhoodDays) {
             const dayCurrent = classRecreated.filter((cr) => cr.dayOfWeek === d);
             const slot = dayCurrent.length;
-<<<<<<< HEAD
             if (slot < dailyLimit && !teacherOccupied.has(`${it.teacherId}_${d}_${cShift}_${slot}`)) {
-=======
-            const dayLength = dayCounts.get(d) || dailyLimit;
-            if (
-              slot < dailyLimit &&
-              !teacherOccupied.has(`${it.teacherId}_${d}_${cShift}_${slot}`) &&
-              satisfiesUserRules(it, d, slot, dayLength)
-            ) {
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
               const sub = subjects.find((s) => s.id === it.subjectId);
               const reqType = sub?.requiredRoomType || 'regular';
               const r =

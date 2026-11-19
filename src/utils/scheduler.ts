@@ -1,4 +1,4 @@
-import { AppState, ScheduleItem, Subject, Teacher, Room, SchoolClass, LessonConstraint } from '../types/schedule';
+﻿import { AppState, ScheduleItem, Subject, Teacher, Room, SchoolClass, LessonConstraint } from '../types/schedule';
 
 export interface GenerationConflict {
   type: 'teacher_overload' | 'room_shortage' | 'daily_limit' | 'constraint_deadlock';
@@ -34,13 +34,10 @@ interface RequiredActivity {
   requiredRoomType: string;
   preferredTeacherId?: string;
   preferredRoomId?: string;
-<<<<<<< HEAD
   isDivided?: boolean;
   groupCount?: number;
   preferredTeacherId2?: string;
   preferredRoomId2?: string;
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   weeklyHours: number;
   rules: LessonConstraint[];
 }
@@ -94,18 +91,13 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
 
     // Determine teacher (support homeroom teacher or explicit assignment)
     let teacherId = item.teacherId;
-<<<<<<< HEAD
     if (subject.id === 'sub_primary' || teacherId === 'homeroom' || (!teacherId && classObj.grade <= 4 && subject.id === 'sub_primary')) {
-=======
-    if (teacherId === 'homeroom' || (!teacherId && classObj.homeroomTeacherId)) {
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       teacherId = classObj.homeroomTeacherId || `tch_homeroom_${classObj.id}`;
     }
 
     let assignedTeacher = teacherId ? teacherMap.get(teacherId) : undefined;
     if (!assignedTeacher) {
       const classShift = classObj.shift || 1;
-<<<<<<< HEAD
 
       // 1. Pedagogical Pairing Rule: Russian & Literature must be taught by the same teacher
       if (subject.id === 'sub_lit') {
@@ -177,21 +169,6 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
           warnings.push(`Не назначен учитель для предмета «${subject.name}» (${classShift}-я смена) в классе ${classObj.name}`);
           return;
         }
-=======
-      const qualifiedList = teachers.filter(
-        (t) => t.subjectIds.includes(subject.id) && (t.shift === classShift || !t.shift)
-      );
-      // Pick the least demanded qualified teacher for this shift
-      qualifiedList.sort((a, b) => (teacherDemand.get(a.id) || 0) - (teacherDemand.get(b.id) || 0));
-      const qualified = qualifiedList[0] || teachers.find((t) => t.subjectIds.includes(subject.id));
-
-      if (qualified) {
-        teacherId = qualified.id;
-        assignedTeacher = qualified;
-      } else {
-        warnings.push(`Не назначен учитель для предмета «${subject.name}» (${classShift}-я смена) в классе ${classObj.name}`);
-        return;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       }
     }
 
@@ -199,12 +176,9 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
 
     // Track resource demand
     teacherDemand.set(teacherId, (teacherDemand.get(teacherId) || 0) + item.hoursPerWeek);
-<<<<<<< HEAD
     if (item.dividedIntoGroups && item.teacherId2) {
       teacherDemand.set(item.teacherId2, (teacherDemand.get(item.teacherId2) || 0) + item.hoursPerWeek);
     }
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
     const reqRoomType = subject.requiredRoomType || 'regular';
     roomTypeDemand.set(reqRoomType, (roomTypeDemand.get(reqRoomType) || 0) + item.hoursPerWeek);
 
@@ -215,10 +189,7 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
     );
 
     const isProfile = reqRoomType !== 'regular';
-<<<<<<< HEAD
     const isDivided = Boolean(item.dividedIntoGroups);
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
     for (let i = 0; i < item.hoursPerWeek; i++) {
       requiredActivities.push({
@@ -231,13 +202,10 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
         requiredRoomType: reqRoomType,
         preferredTeacherId: teacherId,
         preferredRoomId: item.preferredRoomId || assignedTeacher?.preferredRoomId || classObj.homeroomRoomId,
-<<<<<<< HEAD
         isDivided,
         groupCount: item.groupCount || (isDivided ? 2 : 1),
         preferredTeacherId2: item.teacherId2,
         preferredRoomId2: item.preferredRoomId2,
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
         weeklyHours: item.hoursPerWeek,
         rules: relevantRules,
       });
@@ -324,7 +292,6 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
     return !teacherBusy.has(`${teacherId}_${d}_${shift}_${u}`);
   };
 
-<<<<<<< HEAD
   const teacherWindowCountAfterPlacement = (
     teacherId: string,
     day: number,
@@ -360,8 +327,6 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
       })[0];
   };
 
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
   // Rule verification
   const satisfiesRules = (activity: RequiredActivity, day: number, slot: number, dayLimit: number): boolean => {
     for (const rule of activity.rules) {
@@ -397,13 +362,9 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
       // Eligible classes that need lesson at slot u on day d
       const eligibleClasses = classes.filter((c) => {
         const currentLessons = classDayLessons.get(`${c.id}_${d}`)!;
-<<<<<<< HEAD
         const occupiedSlots = new Set(currentLessons.map((l) => l.lessonIndex));
         if (occupiedSlots.has(u)) return false;
         if (occupiedSlots.size !== u) return false;
-=======
-        if (currentLessons.length !== u) return false;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
         const limit = parallelLimits[c.grade] || 6;
         if (u >= limit) return false;
         return Array.from(unplacedActs).some((id) => actMap.get(id)!.classId === c.id);
@@ -420,39 +381,26 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
 
         const valid = classRemainingActs.filter((a) => {
           const curSub = classDaySubjectCount.get(`${c.id}_${d}_${a.subjectId}`) || 0;
-<<<<<<< HEAD
           const maxSub = a.subject.id === 'sub_primary' ? 4 : (a.subject.maxPerDay || (a.weeklyHours > 5 ? 2 : 1));
-=======
-          const maxSub = a.weeklyHours > 5 ? 2 : 1;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
           if (curSub >= maxSub) return false;
 
           if (!satisfiesRules(a, d, u, dayLimit)) return false;
 
           const qualified = teachers.filter((t) => t.subjectIds.includes(a.subjectId) || t.id === a.preferredTeacherId);
-<<<<<<< HEAD
           const freeTeachers = qualified.filter((t) => isTeacherFree(t.id, d, u, cShift));
           if (freeTeachers.length === 0) return false;
           if (a.isDivided && freeTeachers.length < 2) return false;
-=======
-          const hasFreeTeacher = qualified.some((t) => isTeacherFree(t.id, d, u, cShift));
-          if (!hasFreeTeacher) return false;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
           const compRooms = (roomsByType.get(a.requiredRoomType) || []).filter((r) => isRoomFree(r, d, u, cShift));
           if (compRooms.length === 0 && a.requiredRoomType === 'regular') {
             compRooms.push(...(roomsByType.get('regular') || []).filter((r) => isRoomFree(r, d, u, cShift)));
           }
-<<<<<<< HEAD
           if (compRooms.length === 0) return false;
           if (a.isDivided && compRooms.length < 2 && a.requiredRoomType !== 'gym') {
             const allRegFree = (roomsByType.get('regular') || []).filter((r) => isRoomFree(r, d, u, cShift));
             if (compRooms.length + allRegFree.length < 2) return false;
           }
           return true;
-=======
-          return compRooms.length > 0;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
         });
 
         return { c, validActs: valid, score: valid.length };
@@ -467,29 +415,20 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
         const cShift = item.c.shift || 1;
         const filtered = item.validActs.filter((a) => {
           const qualified = teachers.filter((t) => t.subjectIds.includes(a.subjectId) || t.id === a.preferredTeacherId);
-<<<<<<< HEAD
           const freeTeachers = qualified.filter((t) => isTeacherFree(t.id, d, u, cShift));
           if (freeTeachers.length === 0) return false;
           if (a.isDivided && freeTeachers.length < 2) return false;
-=======
-          const hasFreeTeacher = qualified.some((t) => isTeacherFree(t.id, d, u, cShift));
-          if (!hasFreeTeacher) return false;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
           const compRooms = (roomsByType.get(a.requiredRoomType) || []).filter((r) => isRoomFree(r, d, u, cShift));
           if (compRooms.length === 0 && a.requiredRoomType === 'regular') {
             compRooms.push(...(roomsByType.get('regular') || []).filter((r) => isRoomFree(r, d, u, cShift)));
           }
-<<<<<<< HEAD
           if (compRooms.length === 0) return false;
           if (a.isDivided && compRooms.length < 2 && a.requiredRoomType !== 'gym') {
             const allRegFree = (roomsByType.get('regular') || []).filter((r) => isRoomFree(r, d, u, cShift));
             if (compRooms.length + allRegFree.length < 2) return false;
           }
           return true;
-=======
-          return compRooms.length > 0;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
         });
 
         if (filtered.length === 0) continue;
@@ -509,14 +448,8 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
 
         const chosenAct = filtered[0];
         const qualified = teachers.filter((t) => t.subjectIds.includes(chosenAct.subjectId) || t.id === chosenAct.preferredTeacherId);
-<<<<<<< HEAD
         const chosenTeacher = chooseTeacher(qualified, d, u, cShift, chosenAct.preferredTeacherId);
         if (!chosenTeacher) continue;
-=======
-        const chosenTeacher =
-          qualified.find((t) => isTeacherFree(t.id, d, u, cShift) && t.id === chosenAct.preferredTeacherId) ||
-          qualified.find((t) => isTeacherFree(t.id, d, u, cShift))!;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
         const compRooms = (roomsByType.get(chosenAct.requiredRoomType) || []).filter((r) => isRoomFree(r, d, u, cShift));
         if (compRooms.length === 0 && chosenAct.requiredRoomType === 'regular') {
@@ -524,7 +457,6 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
         }
         const chosenRoom = compRooms.find((r) => r.id === chosenAct.preferredRoomId) || compRooms[0];
 
-<<<<<<< HEAD
         if (chosenAct.isDivided) {
           // Find teacher 2 and room 2 for 2nd group
           const qualified2 = teachers.filter((t) => t.subjectIds.includes(chosenAct.subjectId) || t.id === chosenAct.preferredTeacherId2);
@@ -611,23 +543,6 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
           roomOccupancy.set(rKey, (roomOccupancy.get(rKey) || 0) + 1);
         }
 
-=======
-        const schedItem: ScheduleItem & { actId: string } = {
-          id: `sch_${chosenAct.id}_${d}_${u}`,
-          actId: chosenAct.id,
-          classId: chosenAct.classId,
-          subjectId: chosenAct.subjectId,
-          teacherId: chosenTeacher.id,
-          roomId: chosenRoom.id,
-          dayOfWeek: d,
-          lessonIndex: u,
-        };
-
-        classDayLessons.get(`${item.c.id}_${d}`)!.push(schedItem);
-        teacherBusy.add(`${chosenTeacher.id}_${d}_${cShift}_${u}`);
-        const rKey = `${chosenRoom.id}_${d}_${cShift}_${u}`;
-        roomOccupancy.set(rKey, (roomOccupancy.get(rKey) || 0) + 1);
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
         const subKey = `${item.c.id}_${d}_${chosenAct.subjectId}`;
         classDaySubjectCount.set(subKey, (classDaySubjectCount.get(subKey) || 0) + 1);
         unplacedActs.delete(chosenAct.id);
@@ -647,18 +562,13 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
     // Attempt direct sequential placement at the end of an open day
     for (let d = 0; d < daysCount && !placed; d++) {
       const dayLessons = classDayLessons.get(`${c.id}_${d}`)!;
-<<<<<<< HEAD
       const occupiedSlots = new Set(dayLessons.map((l) => l.lessonIndex));
       const u = occupiedSlots.size;
-=======
-      const u = dayLessons.length;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       if (u >= limit) continue;
       const dayLimit = dayLengths.get(c.id)?.[d] || limit;
       if (!satisfiesRules(act, d, u, dayLimit)) continue;
 
       const curSub = classDaySubjectCount.get(`${c.id}_${d}_${act.subjectId}`) || 0;
-<<<<<<< HEAD
       const maxSub = act.subject.id === 'sub_primary' ? 4 : (act.subject.maxPerDay || (act.weeklyHours > 5 ? 2 : 1));
       if (curSub >= maxSub) continue;
 
@@ -668,13 +578,6 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
       if (act.isDivided && freeTeachers.length < 2) continue;
 
       const freeTeacher = chooseTeacher(qualified, d, u, cShift, act.preferredTeacherId);
-=======
-      const maxSub = act.weeklyHours > 5 ? 2 : 1;
-      if (curSub >= maxSub) continue;
-
-      const qualified = teachers.filter((t) => t.subjectIds.includes(act.subjectId) || t.id === act.preferredTeacherId);
-      const freeTeacher = qualified.find((t) => isTeacherFree(t.id, d, u, cShift));
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       if (!freeTeacher) continue;
 
       const compRooms = (roomsByType.get(act.requiredRoomType) || []).filter((r) => isRoomFree(r, d, u, cShift));
@@ -684,7 +587,6 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
       if (compRooms.length === 0) continue;
       const room = compRooms.find((r) => r.id === act.preferredRoomId) || compRooms[0];
 
-<<<<<<< HEAD
       if (act.isDivided) {
         const freeTeachers2 = freeTeachers.filter((t) => t.id !== freeTeacher.id);
         const chosenTeacher2 = freeTeachers2.find((t) => t.id === act.preferredTeacherId2) || freeTeachers2[0];
@@ -748,23 +650,6 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
         roomOccupancy.set(rKey, (roomOccupancy.get(rKey) || 0) + 1);
       }
 
-=======
-      const schedItem: ScheduleItem & { actId: string } = {
-        id: `sch_${act.id}_${d}_${u}`,
-        actId: act.id,
-        classId: act.classId,
-        subjectId: act.subjectId,
-        teacherId: freeTeacher.id,
-        roomId: room.id,
-        dayOfWeek: d,
-        lessonIndex: u,
-      };
-
-      dayLessons.push(schedItem);
-      teacherBusy.add(`${freeTeacher.id}_${d}_${cShift}_${u}`);
-      const rKey = `${room.id}_${d}_${cShift}_${u}`;
-      roomOccupancy.set(rKey, (roomOccupancy.get(rKey) || 0) + 1);
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       const subKey = `${c.id}_${d}_${act.subjectId}`;
       classDaySubjectCount.set(subKey, (classDaySubjectCount.get(subKey) || 0) + 1);
       unplacedActs.delete(act.id);
@@ -775,7 +660,6 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
     if (!placed) {
       for (let d1 = 0; d1 < daysCount && !placed; d1++) {
         const day1Lessons = classDayLessons.get(`${c.id}_${d1}`)!;
-<<<<<<< HEAD
         for (let idx1 = 0; idx1 < day1Lessons.length && !placed; idx1++) {
           const item1 = day1Lessons[idx1];
           const slot1 = item1.lessonIndex;
@@ -787,49 +671,25 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
           if (!satisfiesRules(act, d1, slot1, day1Limit)) continue;
           const qualified = teachers.filter((t) => t.subjectIds.includes(act.subjectId) || t.id === act.preferredTeacherId);
           const freeTeacher = chooseTeacher(qualified, d1, slot1, cShift, act.preferredTeacherId);
-=======
-        for (let u1 = 0; u1 < day1Lessons.length && !placed; u1++) {
-          const item1 = day1Lessons[u1];
-          const act1 = actMap.get(item1.actId);
-          if (!act1) continue;
-
-          // Can act take (d1, u1)?
-          const day1Limit = dayLengths.get(c.id)?.[d1] || limit;
-          if (!satisfiesRules(act, d1, u1, day1Limit)) continue;
-          const qualified = teachers.filter((t) => t.subjectIds.includes(act.subjectId) || t.id === act.preferredTeacherId);
-          const freeTeacher = qualified.find((t) => t.id === item1.teacherId || isTeacherFree(t.id, d1, u1, cShift));
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
           if (!freeTeacher) continue;
 
           // Can act1 move to the end of day d2 (another day or same day d1)?
           for (let d2 = 0; d2 < daysCount && !placed; d2++) {
             const day2Lessons = classDayLessons.get(`${c.id}_${d2}`)!;
-<<<<<<< HEAD
             const occupiedSlots2 = new Set(day2Lessons.map((l) => l.lessonIndex));
             const u2 = occupiedSlots2.size;
-=======
-            const u2 = day2Lessons.length;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
             if (u2 >= limit) continue;
             const day2Limit = dayLengths.get(c.id)?.[d2] || limit;
             if (!satisfiesRules(act1, d2, u2, day2Limit)) continue;
 
             if (d2 !== d1) {
               const curSub2 = classDaySubjectCount.get(`${c.id}_${d2}_${act1.subjectId}`) || 0;
-<<<<<<< HEAD
               const maxSub2 = act1.subject.id === 'sub_primary' ? 4 : (act1.subject.maxPerDay || (act1.weeklyHours > 5 ? 2 : 1));
               if (curSub2 >= maxSub2) continue;
             }
 
             const qualified1 = teachers.filter((t) => t.subjectIds.includes(act1.subjectId) || t.id === act1.preferredTeacherId);
             const freeTeacher1 = chooseTeacher(qualified1, d2, u2, cShift, act1.preferredTeacherId);
-=======
-              if (curSub2 >= (act1.weeklyHours > 5 ? 2 : 1)) continue;
-            }
-
-            const qualified1 = teachers.filter((t) => t.subjectIds.includes(act1.subjectId) || t.id === act1.preferredTeacherId);
-            const freeTeacher1 = qualified1.find((t) => isTeacherFree(t.id, d2, u2, cShift));
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
             if (!freeTeacher1) continue;
 
             const compRooms2 = (roomsByType.get(act1.requiredRoomType) || []).filter((r) => isRoomFree(r, d2, u2, cShift));
@@ -839,25 +699,15 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
             if (compRooms2.length === 0) continue;
             const room2 = compRooms2[0];
 
-<<<<<<< HEAD
             // Rooms for act at (d1, slot1)
             const compRooms1 = (roomsByType.get(act.requiredRoomType) || []).filter((r) => {
               const cur = (roomOccupancy.get(`${r.id}_${d1}_${cShift}_${slot1}`) || 0) - (item1.roomId === r.id ? 1 : 0);
-=======
-            // Rooms for act at (d1, u1)
-            const compRooms1 = (roomsByType.get(act.requiredRoomType) || []).filter((r) => {
-              const cur = (roomOccupancy.get(`${r.id}_${d1}_${cShift}_${u1}`) || 0) - (item1.roomId === r.id ? 1 : 0);
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
               return cur < (r.capacity || 1);
             });
             if (compRooms1.length === 0 && act.requiredRoomType === 'regular') {
               compRooms1.push(
                 ...(roomsByType.get('regular') || []).filter((r) => {
-<<<<<<< HEAD
                   const cur = (roomOccupancy.get(`${r.id}_${d1}_${cShift}_${slot1}`) || 0) - (item1.roomId === r.id ? 1 : 0);
-=======
-                  const cur = (roomOccupancy.get(`${r.id}_${d1}_${cShift}_${u1}`) || 0) - (item1.roomId === r.id ? 1 : 0);
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
                   return cur < (r.capacity || 1);
                 })
               );
@@ -866,13 +716,8 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
             const room1 = compRooms1[0];
 
             // SWAP EXECUTION!
-<<<<<<< HEAD
             teacherBusy.delete(`${item1.teacherId}_${d1}_${cShift}_${slot1}`);
             const rKey1 = `${item1.roomId}_${d1}_${cShift}_${slot1}`;
-=======
-            teacherBusy.delete(`${item1.teacherId}_${d1}_${cShift}_${u1}`);
-            const rKey1 = `${item1.roomId}_${d1}_${cShift}_${u1}`;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
             roomOccupancy.set(rKey1, (roomOccupancy.get(rKey1) || 1) - 1);
             classDaySubjectCount.set(
               `${c.id}_${d1}_${act1.subjectId}`,
@@ -892,34 +737,20 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
               (classDaySubjectCount.get(`${c.id}_${d2}_${act1.subjectId}`) || 0) + 1
             );
 
-<<<<<<< HEAD
             // Put act at (d1, slot1)
             const newSchedItem: ScheduleItem & { actId: string } = {
               id: `sch_${act.id}_${d1}_${slot1}`,
-=======
-            // Put act at (d1, u1)
-            const newSchedItem: ScheduleItem & { actId: string } = {
-              id: `sch_${act.id}_${d1}_${u1}`,
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
               actId: act.id,
               classId: act.classId,
               subjectId: act.subjectId,
               teacherId: freeTeacher.id,
               roomId: room1.id,
               dayOfWeek: d1,
-<<<<<<< HEAD
               lessonIndex: slot1,
             };
             day1Lessons[idx1] = newSchedItem;
             teacherBusy.add(`${freeTeacher.id}_${d1}_${cShift}_${slot1}`);
             roomOccupancy.set(`${room1.id}_${d1}_${cShift}_${slot1}`, (roomOccupancy.get(`${room1.id}_${d1}_${cShift}_${slot1}`) || 0) + 1);
-=======
-              lessonIndex: u1,
-            };
-            day1Lessons[u1] = newSchedItem;
-            teacherBusy.add(`${freeTeacher.id}_${d1}_${cShift}_${u1}`);
-            roomOccupancy.set(`${room1.id}_${d1}_${cShift}_${u1}`, (roomOccupancy.get(`${room1.id}_${d1}_${cShift}_${u1}`) || 0) + 1);
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
             classDaySubjectCount.set(
               `${c.id}_${d1}_${act.subjectId}`,
               (classDaySubjectCount.get(`${c.id}_${d1}_${act.subjectId}`) || 0) + 1
@@ -946,12 +777,6 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
   // Flatten and sanitize schedule
   const finalSchedule: ScheduleItem[] = [];
   classDayLessons.forEach((dayItems) => {
-<<<<<<< HEAD
-=======
-    // Sort day items by lessonIndex strictly
-    dayItems.sort((a, b) => a.lessonIndex - b.lessonIndex);
-    // Ensure 0-indexed contiguous positions
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
     dayItems.forEach((item) => {
       finalSchedule.push({
         id: item.id,
@@ -959,11 +784,8 @@ export function generateSchedule(state: AppState, timeLimitMs = 3500): Generatio
         subjectId: item.subjectId,
         teacherId: item.teacherId,
         roomId: item.roomId,
-<<<<<<< HEAD
         groupId: item.groupId,
         isDivided: item.isDivided,
-=======
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
         dayOfWeek: item.dayOfWeek,
         lessonIndex: item.lessonIndex,
       });

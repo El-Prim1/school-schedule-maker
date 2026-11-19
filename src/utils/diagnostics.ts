@@ -1,4 +1,4 @@
-import { AppState, DiagnosticIssue, ScheduleItem, Subject, Teacher, Room, SchoolClass } from '../types/schedule';
+﻿import { AppState, DiagnosticIssue, ScheduleItem, Subject, Teacher, Room, SchoolClass } from '../types/schedule';
 import { DAYS_OF_WEEK } from './constants';
 import { repairScheduleLNS } from './autoFixEngine';
 
@@ -34,7 +34,6 @@ export function runDiagnostics(state: AppState): DiagnosticIssue[] {
         .filter((s) => s.classId === cls.id && s.dayOfWeek === day)
         .sort((a, b) => a.lessonIndex - b.lessonIndex);
 
-<<<<<<< HEAD
       if (dayLessons.length === 0) continue;
 
       const uniqueSlots = Array.from(new Set(dayLessons.map((l) => l.lessonIndex))).sort((a, b) => a - b);
@@ -59,15 +58,6 @@ export function runDiagnostics(state: AppState): DiagnosticIssue[] {
       const maxSlot = uniqueSlots[uniqueSlots.length - 1];
 
       const hasGaps = maxSlot - minSlot + 1 !== uniqueSlots.length;
-=======
-      if (dayLessons.length <= 1) continue;
-
-      const indices = dayLessons.map((l) => l.lessonIndex);
-      const minSlot = Math.min(...indices);
-      const maxSlot = Math.max(...indices);
-
-      const hasGaps = maxSlot - minSlot + 1 !== dayLessons.length;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       const startsLate = minSlot > 0;
 
       if (hasGaps || startsLate) {
@@ -76,11 +66,7 @@ export function runDiagnostics(state: AppState): DiagnosticIssue[] {
           type: 'student_gap',
           severity: 'error',
           title: `Окно в расписании ${cls.name}`,
-<<<<<<< HEAD
           description: `В день ${day + 1} (${DAYS_OF_WEEK[day]?.name || ''}) у класса ${cls.name} обнаружены разрывы или поздний старт между уроками (заняты слоты: ${uniqueSlots.map((i) => i + 1).join(', ')}).`,
-=======
-          description: `В день ${day + 1} (${DAYS_OF_WEEK[day]?.name || ''}) у класса ${cls.name} обнаружены разрывы или поздний старт между уроками (заняты слоты: ${indices.map((i) => i + 1).join(', ')}).`,
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
           classId: cls.id,
           dayOfWeek: day,
           canAutoFix: true,
@@ -182,25 +168,16 @@ export function runDiagnostics(state: AppState): DiagnosticIssue[] {
   classes.forEach((cls) => {
     const limit = parallelLimits[cls.grade] || 6;
     for (let day = 0; day < daysCount; day++) {
-<<<<<<< HEAD
       const distinctSlots = new Set(
         schedule.filter((s) => s.classId === cls.id && s.dayOfWeek === day).map((s) => s.lessonIndex)
       ).size;
       if (distinctSlots > limit) {
-=======
-      const count = schedule.filter((s) => s.classId === cls.id && s.dayOfWeek === day).length;
-      if (count > limit) {
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
         issues.push({
           id: `lim_${cls.id}_${day}`,
           type: 'daily_limit_exceeded',
           severity: 'warning',
           title: `Превышен дневной лимит уроков (${cls.name})`,
-<<<<<<< HEAD
           description: `У класса ${cls.name} в ${DAYS_OF_WEEK[day]?.name || `день ${day + 1}`} назначено ${distinctSlots} уроков при максимальном лимите ${limit}.`,
-=======
-          description: `У класса ${cls.name} в ${DAYS_OF_WEEK[day]?.name || `день ${day + 1}`} назначено ${count} уроков при максимальном лимите ${limit}.`,
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
           classId: cls.id,
           dayOfWeek: day,
           canAutoFix: true,
@@ -218,18 +195,12 @@ export function runDiagnostics(state: AppState): DiagnosticIssue[] {
         .sort((a, b) => a.lessonIndex - b.lessonIndex);
 
       if (tchLessons.length <= 1) continue;
-<<<<<<< HEAD
       const uniqueSlots = Array.from(new Set(tchLessons.map((s) => s.lessonIndex))).sort((a, b) => a - b);
       if (uniqueSlots.length <= 1) continue;
 
       const minSlot = uniqueSlots[0];
       const maxSlot = uniqueSlots[uniqueSlots.length - 1];
       const windowCount = maxSlot - minSlot + 1 - uniqueSlots.length;
-=======
-      const minSlot = tchLessons[0].lessonIndex;
-      const maxSlot = tchLessons[tchLessons.length - 1].lessonIndex;
-      const windowCount = maxSlot - minSlot + 1 - tchLessons.length;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
       if (windowCount > 0) {
         issues.push({
@@ -249,18 +220,12 @@ export function runDiagnostics(state: AppState): DiagnosticIssue[] {
 
   // 7. Check Curriculum Hours completeness
   curriculum.forEach((curr) => {
-<<<<<<< HEAD
     const classSubLessons = schedule.filter(
       (s) => s.classId === curr.classId && s.subjectId === curr.subjectId
     );
     const scheduledHours = curr.dividedIntoGroups
       ? new Set(classSubLessons.map((s) => `${s.dayOfWeek}_${s.lessonIndex}`)).size
       : classSubLessons.length;
-=======
-    const scheduledHours = schedule.filter(
-      (s) => s.classId === curr.classId && s.subjectId === curr.subjectId
-    ).length;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
     if (scheduledHours < curr.hoursPerWeek) {
       const cls = classMap.get(curr.classId);
@@ -416,6 +381,29 @@ function isRoomFree(
 }
 
 /**
+ * Number of distinct lesson slots occupied by items.
+ * Divided-group lessons share a slot, so two items can count as one hour.
+ */
+function occupiedSlotCount(items: Pick<ScheduleItem, 'lessonIndex'>[]): number {
+  return new Set(items.map((item) => item.lessonIndex)).size;
+}
+
+/**
+ * Pulls lessons up to fill student gaps while keeping co-located subgroups
+ * (same original lessonIndex) in the same compacted slot.
+ */
+function compactClassDayItems(classDayItems: ScheduleItem[]): ScheduleItem[] {
+  const uniqueSlots = Array.from(new Set(classDayItems.map((item) => item.lessonIndex))).sort(
+    (a, b) => a - b
+  );
+  const slotMap = new Map(uniqueSlots.map((slot, idx) => [slot, idx]));
+  return classDayItems.map((item) => ({
+    ...item,
+    lessonIndex: slotMap.get(item.lessonIndex) ?? item.lessonIndex,
+  }));
+}
+
+/**
  * Compacts contiguous lessons for a class on a given day (0..N-1)
  */
 function compactClassDay(
@@ -426,14 +414,9 @@ function compactClassDay(
   const otherItems = schedule.filter((s) => !(s.classId === classId && s.dayOfWeek === day));
   const classDayItems = schedule
     .filter((s) => s.classId === classId && s.dayOfWeek === day)
-    .sort((a, b) => a.lessonIndex - b.lessonIndex);
+    .sort((a, b) => a.lessonIndex - b.lessonIndex || (a.groupId || 0) - (b.groupId || 0));
 
-  const compacted = classDayItems.map((item, idx) => ({
-    ...item,
-    lessonIndex: idx,
-  }));
-
-  return otherItems.concat(compacted);
+  return otherItems.concat(compactClassDayItems(classDayItems));
 }
 
 // ---------------------------------------------------------------------------
@@ -462,17 +445,19 @@ export function autoFixIssue(state: AppState, issue: DiagnosticIssue): AppState 
 
       if (classDayItems.length === 0) return state;
 
-      const compacted = classDayItems.map((item, idx) => ({ ...item, lessonIndex: idx }));
+      const compacted = compactClassDayItems(classDayItems);
+      const otherItems = state.schedule.filter((s) => !(s.classId === classId && s.dayOfWeek === day));
+      const candidateSchedule = otherItems.concat(compacted);
 
       // Check teacher/room collisions for the compacted lessons
       let valid = true;
       for (const item of compacted) {
-        if (!isTeacherFree(state.schedule, item.teacherId, day, item.lessonIndex, shift, classMap, item.id)) {
+        if (!isTeacherFree(candidateSchedule, item.teacherId, day, item.lessonIndex, shift, classMap, item.id)) {
           valid = false;
           break;
         }
         const room = roomMap.get(item.roomId);
-        if (!isRoomFree(state.schedule, item.roomId, room?.capacity || 1, day, item.lessonIndex, shift, classMap, item.id)) {
+        if (!isRoomFree(candidateSchedule, item.roomId, room?.capacity || 1, day, item.lessonIndex, shift, classMap, item.id)) {
           valid = false;
           break;
         }
@@ -480,8 +465,7 @@ export function autoFixIssue(state: AppState, issue: DiagnosticIssue): AppState 
 
       if (!valid) return state;
 
-      const otherItems = state.schedule.filter((s) => !(s.classId === classId && s.dayOfWeek === day));
-      return { ...state, schedule: otherItems.concat(compacted) };
+      return { ...state, schedule: candidateSchedule };
     }
 
     case 'teacher_collision':
@@ -503,9 +487,9 @@ export function autoFixIssue(state: AppState, issue: DiagnosticIssue): AppState 
         const classDayLessons = state.schedule.filter(
           (s) => s.classId === cls.id && s.dayOfWeek === day && s.id !== movingItem.id
         );
-        if (classDayLessons.length >= limit) continue;
+        if (occupiedSlotCount(classDayLessons) >= limit) continue;
 
-        const targetSlot = classDayLessons.length;
+        const targetSlot = occupiedSlotCount(classDayLessons);
         if (targetSlot >= state.settings.maxLessonsGlobal) continue;
 
         if (!isTeacherFree(state.schedule, movingItem.teacherId, day, targetSlot, shift, classMap, movingItem.id)) {
@@ -574,23 +558,23 @@ export function autoFixIssue(state: AppState, issue: DiagnosticIssue): AppState 
         .filter((s) => s.classId === classId && s.dayOfWeek === day)
         .sort((a, b) => b.lessonIndex - a.lessonIndex);
 
-      if (classDayLessons.length <= limit) return state;
+      if (occupiedSlotCount(classDayLessons) <= limit) return state;
       const movingLesson = classDayLessons[0];
 
       // Find day with least lessons for this class
       const sortedDays = Array.from({ length: daysCount }, (_, i) => i)
         .filter((d) => d !== day)
         .sort((a, b) => {
-          const ca = state.schedule.filter((s) => s.classId === classId && s.dayOfWeek === a).length;
-          const cb = state.schedule.filter((s) => s.classId === classId && s.dayOfWeek === b).length;
+          const ca = occupiedSlotCount(state.schedule.filter((s) => s.classId === classId && s.dayOfWeek === a));
+          const cb = occupiedSlotCount(state.schedule.filter((s) => s.classId === classId && s.dayOfWeek === b));
           return ca - cb;
         });
 
       for (const targetDay of sortedDays) {
         const targetLessons = state.schedule.filter((s) => s.classId === classId && s.dayOfWeek === targetDay);
-        if (targetLessons.length >= limit) continue;
+        if (occupiedSlotCount(targetLessons) >= limit) continue;
 
-        const targetSlot = targetLessons.length;
+        const targetSlot = occupiedSlotCount(targetLessons);
         if (!isTeacherFree(state.schedule, movingLesson.teacherId, targetDay, targetSlot, shift, classMap, movingLesson.id)) {
           continue;
         }
@@ -631,7 +615,7 @@ export function autoFixIssue(state: AppState, issue: DiagnosticIssue): AppState 
       // FIRST: Check if teacher has an existing window on any day and fill it
       for (let day = 0; day < daysCount; day++) {
         const classDayLessons = state.schedule.filter((s) => s.classId === cls.id && s.dayOfWeek === day);
-        if (classDayLessons.length >= limit) continue;
+        if (occupiedSlotCount(classDayLessons) >= limit) continue;
 
         const tchLessons = state.schedule
           .filter((s) => s.teacherId === teacherId && s.dayOfWeek === day)
@@ -643,7 +627,7 @@ export function autoFixIssue(state: AppState, issue: DiagnosticIssue): AppState 
           for (let slot = minS + 1; slot < maxS; slot++) {
             if (!tchLessons.some((l) => l.lessonIndex === slot)) {
               // Gap found! Can this class take a lesson here?
-              if (slot === classDayLessons.length) {
+              if (slot === occupiedSlotCount(classDayLessons)) {
                 const reqType = subject.requiredRoomType;
                 const room = state.rooms.find((r) => {
                   if (reqType !== 'regular' && r.type !== reqType) return false;
@@ -669,15 +653,15 @@ export function autoFixIssue(state: AppState, issue: DiagnosticIssue): AppState 
 
       // SECOND: Place at the end of the least loaded day
       const sortedDays = Array.from({ length: daysCount }, (_, i) => i).sort((a, b) => {
-        const ca = state.schedule.filter((s) => s.classId === cls.id && s.dayOfWeek === a).length;
-        const cb = state.schedule.filter((s) => s.classId === cls.id && s.dayOfWeek === b).length;
+        const ca = occupiedSlotCount(state.schedule.filter((s) => s.classId === cls.id && s.dayOfWeek === a));
+        const cb = occupiedSlotCount(state.schedule.filter((s) => s.classId === cls.id && s.dayOfWeek === b));
         return ca - cb;
       });
 
       for (const day of sortedDays) {
         const classLessons = state.schedule.filter((s) => s.classId === cls.id && s.dayOfWeek === day);
-        if (classLessons.length >= limit) continue;
-        const targetSlot = classLessons.length;
+        if (occupiedSlotCount(classLessons) >= limit) continue;
+        const targetSlot = occupiedSlotCount(classLessons);
 
         if (!isTeacherFree(state.schedule, teacherId, day, targetSlot, shift, classMap)) continue;
 
@@ -818,9 +802,9 @@ function repairTeacherGapWithSearch(state: AppState, issue: DiagnosticIssue): Ap
       if (targetDay === day) continue;
 
       const targetClassLessons = state.schedule.filter((s) => s.classId === cls.id && s.dayOfWeek === targetDay);
-      if (targetClassLessons.length >= limit) continue;
+      if (occupiedSlotCount(targetClassLessons) >= limit) continue;
 
-      const targetSlot = targetClassLessons.length;
+      const targetSlot = occupiedSlotCount(targetClassLessons);
       if (!isTeacherFree(state.schedule, teacherId, targetDay, targetSlot, shift, classMap, lesson.id)) {
         continue;
       }
@@ -885,7 +869,7 @@ function repairConstraintWithSearch(state: AppState, issue: DiagnosticIssue): Ap
     if (constraint.conditionType === 'always_first' || constraint.conditionType === 'day_first') {
       targetSlot = 0;
     } else if (constraint.conditionType === 'always_last' || constraint.conditionType === 'day_last') {
-      targetSlot = Math.max(0, targetClassLessons.length > 0 ? targetClassLessons.length - 1 : 0);
+      targetSlot = Math.max(0, occupiedSlotCount(targetClassLessons) > 0 ? occupiedSlotCount(targetClassLessons) - 1 : 0);
     } else if (constraint.conditionType === 'fixed_slot') {
       targetSlot = constraint.lessonIndex ?? 0;
     }
@@ -911,7 +895,7 @@ function repairConstraintWithSearch(state: AppState, issue: DiagnosticIssue): Ap
       }
     } else {
       // Cross-day move
-      if (targetClassLessons.length >= dailyLimit) continue;
+      if (occupiedSlotCount(targetClassLessons) >= dailyLimit) continue;
       if (!isTeacherFree(state.schedule, lesson.teacherId, targetDay, targetSlot, shift, classMap, lesson.id)) continue;
 
       const room = roomMap.get(lesson.roomId);
@@ -964,10 +948,6 @@ export function autoFixAllIssues(state: AppState): AutoFixAllResult {
 
   let iterations = 0;
   const maxIterations = 12; // 12 rounds is plenty with fast local checks!
-<<<<<<< HEAD
-=======
-  let totalFixed = 0;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
 
   while (iterations < maxIterations) {
     const currentIssues = runDiagnostics(currentState).filter((i) => i.canAutoFix);
@@ -995,7 +975,6 @@ export function autoFixAllIssues(state: AppState): AutoFixAllResult {
     for (const issue of sortedIssues) {
       const nextState = autoFixIssue(currentState, issue);
       if (nextState !== currentState) {
-<<<<<<< HEAD
         const beforeCount = runDiagnostics(currentState).length;
         const afterIssues = runDiagnostics(nextState);
 
@@ -1004,11 +983,6 @@ export function autoFixAllIssues(state: AppState): AutoFixAllResult {
         if (afterIssues.length >= beforeCount) continue;
         currentState = nextState;
         fixedInRound = true;
-=======
-        currentState = nextState;
-        fixedInRound = true;
-        totalFixed++;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       }
     }
 
@@ -1016,15 +990,10 @@ export function autoFixAllIssues(state: AppState): AutoFixAllResult {
       // Fallback single-pass fast LNS if heuristic stalled
       const lnsResult = repairScheduleLNS(currentState);
       if (lnsResult.success && lnsResult.repairedItemsCount > 0) {
-<<<<<<< HEAD
         const lnsState = { ...currentState, schedule: lnsResult.repairedSchedule };
         if (runDiagnostics(lnsState).length < runDiagnostics(currentState).length) {
           currentState = lnsState;
         }
-=======
-        currentState = { ...currentState, schedule: lnsResult.repairedSchedule };
-        totalFixed += lnsResult.repairedItemsCount;
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
       }
       break;
     }
@@ -1038,11 +1007,7 @@ export function autoFixAllIssues(state: AppState): AutoFixAllResult {
 
   return {
     newState: currentState,
-<<<<<<< HEAD
     fixedCount: effectiveFixed,
-=======
-    fixedCount: effectiveFixed > 0 ? effectiveFixed : totalFixed,
->>>>>>> 12cec5f6903649a2bd06de8b53bab6dd58370adb
     initialIssuesCount,
     remainingIssuesCount: finalCount,
     remainingIssues: finalIssues,
